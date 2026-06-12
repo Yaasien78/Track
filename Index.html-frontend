@@ -32,7 +32,6 @@ function onIncompletePaymentFound(payment) {
   console.log("Payment callback:", payment);
 }
     // Auto login pas buka app
-    window.onload = doPiAuth
   </script>
 </body>
 </html>
