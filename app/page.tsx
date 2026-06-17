@@ -1,5 +1,5 @@
-"use client";
-import { useEffect, useState } from "react";
+"use client"
+import { useEffect, useState } from "react"
 
 declare global {
   interface Window {
@@ -9,85 +9,78 @@ declare global {
 
 export default function Home() {
   const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
 
-  // Init Pi SDK pas app kebuka
   useEffect(() => {
-    if (typeof window !== "undefined" && window.Pi) {
-      window.Pi.init({ version: "2.0" });
+    // Nunggu SDK ke-load dulu
+    const initPi = async () => {
+      if (window.Pi) {
+        await window.Pi.init({ 
+          clientId: "production_xxx...", // GANTI pake Production Client ID dari developers.minepi.com
+          version: "2.0"
+        });
+        console.log("Pi SDK loaded");
+      }
+    }
+    
+    if (document.readyState === 'complete') {
+      initPi();
+    } else {
+      window.addEventListener('load', initPi);
     }
   }, []);
 
-  // Login pake Pi
-  const login = async () => {
-    setLoading(true);
-    try {
-      const scopes = ["username", "payments"];
-      const auth = await window.Pi.authenticate(scopes, () => {});
-      setUser(auth.user);
-    } catch (err) {
-      alert("Login gagal: " + err);
-    }
-    setLoading(false);
-  };
+  const handleLogin = async () => {
+    const scopes = ['username', 'payments'];
+    const auth = await window.Pi.authenticate(scopes, () => {});
+    setUser(auth.user);
+  }
 
-  // Test payment 0.001 Pi
-  const testPayment = async () => {
-    if (!user) return alert("Login dulu bang!");
-    
-    try {
-      await window.Pi.createPayment({
-        amount: 0.001,
-        memo: "Test NFT Social - Step 10",
-        metadata: { app: "nft-social", type: "test" }
-      }, {
-        onReadyForServerApproval: async (paymentId: string) => {
-          console.log("Approval:", paymentId);
-          // Sementara skip backend dulu, langsung approve
-        },
-        onReadyForServerCompletion: async (paymentId: string, txid: string) => {
-          alert("✅ Payment SUKSES!\nTxID: " + txid);
-          console.log("Complete:", paymentId, txid);
-        },
-        onCancel: () => alert("❌ Payment dibatalin"),
-        onError: (error: any) => alert("Error: " + error)
-      });
-    } catch (err) {
-      alert("Gagal create payment: " + err);
-    }
-  };
+  const handleBuy = async () => {
+    const paymentData = {
+      amount: 1,
+      memo: "Mint NFT Genesis",
+      metadata: { nft_id: "genesis_001" }
+    };
+
+    const callbacks = {
+      onReadyForServerApproval: async (paymentId: string) => {
+        await fetch("/api/payments/approve", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ paymentId })
+        });
+      },
+      onReadyForServerCompletion: async (paymentId: string, txid: string) => {
+        await fetch("/api/payments/complete", {
+          method: "POST", 
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ paymentId, txid })
+        });
+        alert("NFT Berhasil di-Mint! 🎉");
+      },
+      onCancel: () => console.log("User cancel"),
+      onError: (error: any) => console.error(error)
+    };
+
+    await window.Pi.createPayment(paymentData, callbacks);
+  }
 
   return (
-    <main style={{ padding: 40, textAlign: "center" }}>
-      <h1>Welcome, {user ? user.username : "Guest"}!</h1>
+    <main className="flex min-h-screen flex-col items-center justify-center p-24">
+      <h1 className="text-4xl font-bold mb-8">NFT Social Genesis</h1>
       
       {!user ? (
-        <button 
-          onClick={login}
-          disabled={loading}
-          style={{ padding: "12px 24px", fontSize: 16, cursor: "pointer" }}
-        >
-          {loading ? "Loading..." : "Login with Pi"}
+        <button onClick={handleLogin} className="bg-purple-600 text-white px-6 py-3 rounded">
+          Login with Pi
         </button>
       ) : (
-        <div>
-          <p>UID: {user.uid}</p>
-          <button 
-            onClick={testPayment}
-            style={{ 
-              padding: "12px 24px", 
-              fontSize: 16, 
-              cursor: "pointer",
-              background: "#ffc500",
-              border: "none",
-              borderRadius: 8,
-              marginTop: 20
-            }}
-          >
-            Test Bayar 0.001 Pi
+        <>
+          <p className="mb-4">Halo @{user.username}</p>
+          <button onClick={handleBuy} className="bg-yellow-500 text-black px-8 py-4 rounded text-xl font-bold">
+            Mint NFT Genesis - 1 Pi
           </button>
-        </div>
+        </>
       )}
     </main>
-  );
-          }
+  )
+  }
