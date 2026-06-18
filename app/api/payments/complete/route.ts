@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
 
     if (!apiKey) return NextResponse.json({ error: 'PI_NETWORK_API_KEY missing' }, { status: 500 });
 
-    const res = await fetch(`https://api.minepi.com/v2/payments/${paymentId}/complete`, {
+    const res = await fetch(`https://api.minepi.com/sandbox/v2/payments/${paymentId}/complete`, {
       method: 'POST',
       headers: {
         'Authorization': `Key ${apiKey}`,
