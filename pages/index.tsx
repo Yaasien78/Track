@@ -7,36 +7,34 @@ declare global {
 }
 
 export default function Home() {
-  const [sdkLoaded, setSdkLoaded] = useState(false);
-
-  // Load Pi SDK + Init
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://sdk.minepi.com/pi-sdk.js';
-    script.onload = () => {
-      setSdkLoaded(true);
-      window.Pi.init({ version: "2.0", sandbox: true }); // sandbox: true kalo testnet
-    };
-    document.body.appendChild(script);
-  }, []);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Handle payment nyangkut
   useEffect(() => {
-    if (window.Pi && sdkLoaded) {
+    if (typeof window !== 'undefined' && window.Pi) {
       window.Pi.onIncompletePaymentFound(async (payment: any) => {
         await fetch('/api/payments/complete', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ paymentId: payment.identifier, txid: payment.transaction?.txid })
+          body: JSON.stringify({ 
+            paymentId: payment.identifier, 
+            txid: payment.transaction?.txid 
+          })
         });
       });
     }
-  }, [sdkLoaded]);
+  }, []);
 
-  const handleMintNFT = async () => {
-    if (!sdkLoaded) return alert("Pi SDK masih loading, tunggu 1 detik");
-    if (!window.Pi) return alert("Buka di Pi Browser jika bukan, silahkan download dulu");
-
+  const handleBuy = async () => {
+    // Cek Pi Browser + SDK
+    if (typeof window === 'undefined') return;
+    if (!window.Pi) {
+      alert('Buka di Pi Browser ya bang! Chrome gak bisa');
+      return;
+    }
+    
+    setIsLoading(true);
+    
     const paymentData = {
       amount: 0.01,
       memo: "Mint NFT Mall Genesis",
@@ -58,9 +56,16 @@ export default function Home() {
           body: JSON.stringify({ paymentId, txid })
         });
         alert("NFT berhasil di-mint! 🔥");
+        setIsLoading(false);
       },
-      onCancel: (paymentId: string) => console.log("Cancel:", paymentId),
-      onError: (error: Error) => alert("Error: " + error.message)
+      onCancel: (paymentId: string) => {
+        console.log("Cancel:", paymentId);
+        setIsLoading(false);
+      },
+      onError: (error: Error) => {
+        alert("Error: " + error.message);
+        setIsLoading(false);
+      }
     };
 
     window.Pi.createPayment(paymentData, callbacks);
@@ -77,23 +82,23 @@ export default function Home() {
     }}>
       <h1 style={{ fontSize: '32px', marginBottom: '20px' }}>Mall Genesis NFT</h1>
       <p style={{ marginBottom: '40px' }}>Mint NFT kamu dengan 0.01 Pi</p>
-
+      
       <button
-        onClick={handleMintNFT}
+        onClick={handleBuy}
+        disabled={isLoading}
         style={{
-          background: 'linear-gradient(90deg, #ff6b6b, #ff8e3c)',
+          background: isLoading ? '#666' : 'linear-gradient(90deg, #ff6b6b, #ff8e3c)',
           border: 'none',
           borderRadius: '12px',
           padding: '16px 32px',
           fontSize: '18px',
           fontWeight: 'bold',
           color: 'white',
-          cursor: 'pointer',
-          boxShadow: '0 4px 15px rgba(255,107,107,0.4)'
+          cursor: isLoading ? 'not-allowed' : 'pointer'
         }}
       >
-        Mint NFT - 0.01 Pi
+        {isLoading ? 'Loading...' : 'Buy with Pi 0.01'}
       </button>
     </div>
   );
-}
+  }
