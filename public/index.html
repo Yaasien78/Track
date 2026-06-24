@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mall Genesis</title>
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:linear-gradient(45deg,#0a0a2a 0%,#1a1a3a 40%,#4a1a4a 100%);color:white;min-height:100vh;overflow-x:hidden}
@@ -34,8 +35,348 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.3)}
 .gallery-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:15px;padding-bottom:80px}
 .nft-card{background:rgba(255,255,255,0.08);border:1px solid rgba(255,215,0,0.3);border-radius:16px;padding:10px;backdrop-filter:blur(8px);box-shadow:0 8px 32px rgba(0,0,0,0.4);transform:perspective(1000px) translateZ(20px);transition:0.3s;cursor:pointer}
 .nft-card:hover{transform:perspective(1000px) translateZ(40px) scale(1.03);border-color:#ffd700}
-.nft-image{width:100%;aspect-ratio:1;border-radius:12px;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;font-size:50px;margin-bottom:8px}
-.nft-reg{font-size:10px;color:#aaa}
-.nft-judul{font-size:14px;font-weight:700}
-.nft-pemilik{font-size:11px;color:#ccc}
-.nft-harga{font-size:13px;color:#ffd700;font-weight:700
+.nft-image{width:100%;
+           <body>
+<div class="browser-info">Browser: <span id="browser-name">-</span><br><a href="https://web2.mallgenesis.com" target="_blank">web2</a></div>
+
+<!-- HALAMAN 1: LOGIN -->
+<div id="page-login" class="page active">
+<div class="container-login">
+<h1>MALL GENESIS</h1>
+<div class="subtitle">GALLERY NFT</div>
+<div class="login-box">
+<div class="profile-4x6" id="profile-box" onclick="uploadFoto()">📷</div>
+<div class="profile-hint">Foto 4x6 untuk PFP</div>
+<button onclick="loginPi()">LOGIN PI</button>
+<div id="status"></div>
+</div>
+</div>
+</div>
+
+<!-- HALAMAN 2: GALERI -->
+<div id="page-gallery" class="page page-gallery">
+<div class="stars" id="stars"></div>
+<div class="sidebar">
+<div class="menu-item" onclick="showPage('page-profile')"><span class="menu-icon">👤</span>Profil</div>
+<div class="menu-item" onclick="showPage('page-gallery')"><span class="menu-icon">🖼️</span>Galeri</div>
+<div class="menu-item" onclick="showPage('page-public')"><span class="menu-icon">🌐</span>Publik</div>
+<div class="menu-item" onclick="showPage('page-chat')"><span class="menu-icon">💬</span>Chat</div>
+<div class="menu-item" onclick="showPage('page-market')"><span class="menu-icon">🏪</span>Market</div>
+<div class="menu-item" onclick="showPage('page-wallet')"><span class="menu-icon">💰</span>Wallet</div>
+<div class="menu-item" onclick="showPage('page-history')"><span class="menu-icon">📜</span>History</div>
+<div class="menu-item" onclick="showPage('page-roadmap')"><span class="menu-icon">🗺️</span>Roadmap</div>
+</div>
+<div class="gallery-container">
+<div class="gallery-title">GALERI NFT</div>
+<input class="search-box" placeholder="Cari NFT..." id="searchInput" onkeyup="searchNFT()">
+<div class="gallery-grid" id="galleryGrid"></div>
+</div>
+</div>
+
+<!-- HALAMAN 3: FEED PUBLIK -->
+<div id="page-public" class="page page-gallery">
+<div class="stars"></div>
+<div class="sidebar">
+<div class="menu-item" onclick="showPage('page-gallery')"><span class="menu-icon">🖼️</span>Galeri</div>
+<div class="menu-item" onclick="showPage('page-public')"><span class="menu-icon">🌐</span>Publik</div>
+<div class="menu-item" onclick="showPage('page-chat')"><span class="menu-icon">💬</span>Chat</div>
+</div>
+<div class="gallery-container">
+<div class="gallery-title">FEED PUBLIK</div>
+<div id="publicFeed"></div>
+</div>
+</div>
+
+<!-- HALAMAN 4: CHAT DM + GRUP -->
+<div id="page-chat" class="page page-gallery">
+<div class="stars"></div>
+<div class="sidebar">
+<div class="menu-item" onclick="showPage('page-gallery')"><span class="menu-icon">🖼️</span>Galeri</div>
+<div class="menu-item" onclick="showPage('page-public')"><span class="menu-icon">🌐</span>Publik</div>
+<div class="menu-item" onclick="showPage('page-chat')"><span class="menu-icon">💬</span>Chat</div>
+</div>
+<div class="gallery-container">
+<div class="gallery-title">CHAT</div>
+<div style="display:flex;gap:10px;margin-bottom:15px">
+<button onclick="showChatTab('dm')" id="tab-dm" style="flex:1">DM</button>
+<button onclick="showChatTab('grup')" id="tab-grup" style="flex:1;background:rgba(255,255,255,0.1);color:white">Grup Publik</button>
+</div>
+<div id="chat-dm" style="display:block">
+<div id="chat-list" style="max-height:200px;overflow-y:auto;margin-bottom:15px"></div>
+<div style="display:flex;gap:10px">
+<input id="dm-user" placeholder="Username" style="flex:1;padding:12px;border-radius:10px;border:none;background:rgba(0,0,0,0.5);color:white">
+<input id="dm-msg" placeholder="Ketik pesan..." style="flex:3;padding:12px;border-radius:10px;border:none;background:rgba(0,0,0,0.5);color:white">
+<button onclick="sendDM()" style="flex:1;margin:0">Kirim</button>
+</div>
+</div>
+<div id="chat-grup" style="display:none">
+<div id="grup-messages" style="height:300px;overflow-y:auto;background:rgba(0,0,0,0.3);border-radius:12px;padding:15px;margin-bottom:15px"></div>
+<div style="display:flex;gap:10px">
+<input id="grup-msg" placeholder="Ketik di grup..." style="flex:4;padding:12px;border-radius:10px;border:none;background:rgba(0,0,0,0.5);color:white">
+<button onclick="sendGrup()" style="flex:1;margin:0">Kirim</button>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+// JS + semua fungsi loginPi, showPage, loadNFT, sendMsg, dll taruh di sini
+// Kode JS panjang... sampe baris terakhir
+</script>
+</body>
+</html>
+           <body>
+<div class="browser-info">Browser: <span id="browser-name">-</span><br><a href="https://web2.mallgenesis.com" target="_blank">web2</a></div>
+
+<!-- HALAMAN 1: LOGIN -->
+<div id="page-login" class="page active">
+<div class="container-login">
+<h1>MALL GENESIS</h1>
+<div class="subtitle">GALLERY NFT</div>
+<div class="login-box">
+<div class="profile-4x6" id="profile-box" onclick="uploadFoto()">📷</div>
+<div class="profile-hint">Foto 4x6 untuk PFP</div>
+<button onclick="loginPi()">LOGIN PI</button>
+<div id="status"></div>
+</div>
+</div>
+</div>
+
+<!-- HALAMAN 2: GALERI -->
+<div id="page-gallery" class="page page-gallery">
+<div class="stars" id="stars"></div>
+<div class="sidebar">
+<div class="menu-item" onclick="showPage('page-profile')"><span class="menu-icon">👤</span>Profil</div>
+<div class="menu-item" onclick="showPage('page-gallery')"><span class="menu-icon">🖼️</span>Galeri</div>
+<div class="menu-item" onclick="showPage('page-public')"><span class="menu-icon">🌐</span>Publik</div>
+<div class="menu-item" onclick="showPage('page-chat')"><span class="menu-icon">💬</span>Chat</div>
+<div class="menu-item" onclick="showPage('page-market')"><span class="menu-icon">🏪</span>Market</div>
+<div class="menu-item" onclick="showPage('page-wallet')"><span class="menu-icon">💰</span>Wallet</div>
+<div class="menu-item" onclick="showPage('page-history')"><span class="menu-icon">📜</span>History</div>
+<div class="menu-item" onclick="showPage('page-roadmap')"><span class="menu-icon">🗺️</span>Roadmap</div>
+</div>
+<div class="gallery-container">
+<div class="gallery-title">GALERI NFT</div>
+<input class="search-box" placeholder="Cari NFT..." id="searchInput" onkeyup="searchNFT()">
+<div class="gallery-grid" id="galleryGrid"></div>
+</div>
+</div>
+
+<!-- HALAMAN 3: FEED PUBLIK -->
+<div id="page-public" class="page page-gallery">
+<div class="stars"></div>
+<div class="sidebar">
+<div class="menu-item" onclick="showPage('page-gallery')"><span class="menu-icon">🖼️</span>Galeri</div>
+<div class="menu-item" onclick="showPage('page-public')"><span class="menu-icon">🌐</span>Publik</div>
+<div class="menu-item" onclick="showPage('page-chat')"><span class="menu-icon">💬</span>Chat</div>
+</div>
+<div class="gallery-container">
+<div class="gallery-title">FEED PUBLIK</div>
+<div id="publicFeed"></div>
+</div>
+</div>
+
+<!-- HALAMAN 4: CHAT DM + GRUP -->
+<div id="page-chat" class="page page-gallery">
+<div class="stars"></div>
+<div class="sidebar">
+<div class="menu-item" onclick="showPage('page-gallery')"><span class="menu-icon">🖼️</span>Galeri</div>
+<div class="menu-item" onclick="showPage('page-public')"><span class="menu-icon">🌐</span>Publik</div>
+<div class="menu-item" onclick="showPage('page-chat')"><span class="menu-icon">💬</span>Chat</div>
+</div>
+<div class="gallery-container">
+<div class="gallery-title">CHAT</div>
+<div style="display:flex;gap:10px;margin-bottom:15px">
+<button onclick="showChatTab('dm')" id="tab-dm" style="flex:1">DM</button>
+<button onclick="showChatTab('grup')" id="tab-grup" style="flex:1;background:rgba(255,255,255,0.1);color:white">Grup Publik</button>
+</div>
+<div id="chat-dm" style="display:block">
+<div id="chat-list" style="max-height:200px;overflow-y:auto;margin-bottom:15px"></div>
+<div style="display:flex;gap:10px">
+<input id="dm-user" placeholder="Username" style="flex:1;padding:12px;border-radius:10px;border:none;background:rgba(0,0,0,0.5);color:white">
+<input id="dm-msg" placeholder="Ketik pesan..." style="flex:3;padding:12px;border-radius:10px;border:none;background:rgba(0,0,0,0.5);color:white">
+<button onclick="sendDM()" style="flex:1;margin:0">Kirim</button>
+</div>
+</div>
+<div id="chat-grup" style="display:none">
+<div id="grup-messages" style="height:300px;overflow-y:auto;background:rgba(0,0,0,0.3);border-radius:12px;padding:15px;margin-bottom:15px"></div>
+<div style="display:flex;gap:10px">
+<input id="grup-msg" placeholder="Ketik di grup..." style="flex:4;padding:12px;border-radius:10px;border:none;background:rgba(0,0,0,0.5);color:white">
+<button onclick="sendGrup()" style="flex:1;margin:0">Kirim</button>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+let currentUser = null;
+let fotoBase64 = null;
+let currentChatTab = 'dm';
+let chatDM = {};
+let grupMessages = [];
+
+function detectBrowser() {
+    const ua = navigator.userAgent;
+    let browser = 'Unknown';
+    if(ua.includes('PiBrowser')) browser = 'Pi Browser';
+    else if(ua.includes('Chrome')) browser = 'Chrome';
+    else if(ua.includes('Safari')) browser = 'Safari';
+    document.getElementById('browser-name').textContent = browser;
+}
+detectBrowser();
+
+function uploadFoto() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = e => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = evt => {
+            fotoBase64 = evt.target.result;
+            document.getElementById('profile-box').innerHTML = `<img src="${fotoBase64}" style="width:100%;height:100%;object-fit:cover">`;
+        };
+        reader.readAsDataURL(file);
+    };
+    input.click();
+}
+
+async function loginPi() {
+    document.getElementById('status').textContent = 'Membuka Pi Browser...';
+    try {
+        if(typeof Pi === 'undefined') {
+            document.getElementById('status').textContent = 'Buka via Pi Browser untuk login beneran. Demo mode aktif.';
+            currentUser = {username: 'demo_user', uid: 'demo123'};
+            setTimeout(() => showPage('page-gallery'), 1000);
+            return;
+        }
+        Pi.init({ version: "2.0", sandbox: true });
+        const auth = await Pi.authenticate(['username'], function(payment) {
+            console.log('Payment:', payment);
+        });
+        currentUser = auth.user;
+        document.getElementById('status').textContent = 'Login sukses! Selamat datang ' + currentUser.username;
+        setTimeout(() => showPage('page-gallery'), 1000);
+    } catch(err) {
+        document.getElementById('status').textContent = 'Login gagal: ' + err.message;
+    }
+}
+
+function showPage(pageId) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(pageId).classList.add('active');
+    if(pageId === 'page-gallery') loadNFT();
+    if(pageId === 'page-public') loadPublicFeed();
+    if(pageId === 'page-chat') loadChat();
+}
+
+function createStars() {
+    const starsContainer = document.getElementById('stars');
+    if(!starsContainer) return;
+    starsContainer.innerHTML = '';
+    for(let i=0; i<100; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.width = Math.random() * 3 + 1 + 'px';
+        star.style.height = star.style.width;
+        star.style.animationDelay = Math.random() * 3 + 's';
+        starsContainer.appendChild(star);
+    }
+}
+
+function loadNFT() {
+    createStars();
+    const grid = document.getElementById('galleryGrid');
+    grid.innerHTML = '';
+    const nfts = [
+        {id:1, judul:'Genesis #001', pemilik:'@admin', harga:'10 Pi', emoji:'💎'},
+        {id:2, judul:'Cosmic Cat', pemilik:'@alice', harga:'5 Pi', emoji:'🐱'},
+        {id:3, judul:'Space Rock', pemilik:'@bob', harga:'3 Pi', emoji:'🪨'},
+        {id:4, judul:'Star Dust', pemilik:'@charlie', harga:'8 Pi', emoji:'✨'}
+    ];
+    nfts.forEach(nft => {
+        grid.innerHTML += `
+        <div class="nft-card">
+            <div class="nft-image">${nft.emoji}</div>
+            <div class="nft-reg">REG-${nft.id}</div>
+            <div class="nft-judul">${nft.judul}</div>
+            <div class="nft-pemilik">Pemilik: ${nft.pemilik}</div>
+            <div class="nft-harga">${nft.harga}</div>
+        </div>`;
+    });
+}
+
+function searchNFT() {
+    const keyword = document.getElementById('searchInput').value.toLowerCase();
+    document.querySelectorAll('.nft-card').forEach(card => {
+        const text = card.textContent.toLowerCase();
+        card.style.display = text.includes(keyword)? 'block' : 'none';
+    });
+}
+
+function loadPublicFeed() {
+    const feed = document.getElementById('publicFeed');
+    feed.innerHTML = `
+    <div class="nft-card" style="margin-bottom:15px">
+        <div class="nft-image">🎨</div>
+        <div class="nft-judul">NFT Langka Dijual!</div>
+        <div class="nft-pemilik">@admin • 2 menit lalu</div>
+        <div style="margin-top:10px;display:flex;gap:10px">
+            <button onclick="likePost(this)" style="flex:1;margin:0;background:rgba(255,255,255,0.1);color:white">❤️ Like 0</button>
+            <button onclick="alert('Buy ke Wallet')" style="flex:1;margin:0">Buy ke Wallet</button>
+        </div>
+    </div>`;
+}
+
+function likePost(btn) {
+    let count = parseInt(btn.textContent.match(/\d+/)[0]) + 1;
+    btn.textContent = `❤️ Like ${count}`;
+    alert('Like +0.01 Pi ke pembuat!');
+}
+
+function showChatTab(tab) {
+    currentChatTab = tab;
+    document.getElementById('chat-dm').style.display = tab === 'dm'? 'block' : 'none';
+    document.getElementById('chat-grup').style.display = tab === 'grup'? 'block' : 'none';
+    document.getElementById('tab-dm').style.background = tab === 'dm'? 'linear-gradient(90deg,#ffd700,#ffed4e)' : 'rgba(255,255,255,0.1)';
+    document.getElementById('tab-dm').style.color = tab === 'dm'? '#1a1a2e' : 'white';
+    document.getElementById('tab-grup').style.background = tab === 'grup'? 'linear-gradient(90deg,#ffd700,#ffed4e)' : 'rgba(255,255,255,0.1)';
+    document.getElementById('tab-grup').style.color = tab === 'grup'? '#1a1a2e' : 'white';
+}
+
+function loadChat() {
+    const chatList = document.getElementById('chat-list');
+    chatList.innerHTML = `
+    <div onclick="openDM('alice')" style="padding:12px;background:rgba(255,255,255,0.05);border-radius:10px;margin-bottom:8px;cursor:pointer">Alice: Halo bang!</div>
+    <div onclick="openDM('bob')" style="padding:12px;background:rgba(255,255,255,0.05);border-radius:10px;margin-bottom:8px;cursor:pointer">Bob: NFT nya keren</div>`;
+
+    const grupMsg = document.getElementById('grup-messages');
+    grupMsg.innerHTML = grupMessages.map(m => `<div style="margin-bottom:8px"><b>${m.user}:</b> ${m.text}</div>`).join('');
+}
+
+function openDM(user) {
+    document.getElementById('dm-user').value = user;
+}
+
+function sendDM() {
+    const user = document.getElementById('dm-user').value;
+    const msg = document.getElementById('dm-msg').value;
+    if(!user ||!msg) return alert('Isi username + pesan!');
+    if(!chatDM[user]) chatDM[user] = [];
+    chatDM[user].push({from: currentUser.username, text: msg});
+    alert(`DM ke ${user}: ${msg}`);
+    document.getElementById('dm-msg').value = '';
+}
+
+function sendGrup() {
+    const msg = document.getElementById('grup-msg').value;
+    if(!msg) return;
+    grupMessages.push({user: currentUser.username, text: msg});
+    loadChat();
+    document.getElementById('grup-msg').value = '';
+}
+</script>
+</body>
+</html>
