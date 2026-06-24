@@ -33,8 +33,16 @@ h1{font-size:48px;margin:0;line-height:1.1;font-weight:900;background:linear-gra
 <button class="btn" onclick="masuk()">Masuk</button>
 </div>
 <script>
-window.addEventListener('DOMContentLoaded',()=>{let f=localStorage.getItem('fotoMG');let i=document.getElementById('img');let s=document.querySelector('.foto span');if(f&&i){i.src=f;i.style.display='block';if(s)s.style.display='none'}let fi=document.getElementById('file');if(fi){fi.onchange=e=>{let fl=e.target.files[0];if(fl){let r=new FileReader();r.onload=ev=>{localStorage.setItem('fotoMG',ev.target.result);i.src=ev.target.result;i.style.display='block';if(s)s.style.display='none'};r.readAsDataURL(fl)}}}});
-async function masuk(){let b=document.querySelector('.btn');b.textContent='Login...';b.disabled=true;try{Pi.init({version:"2.0",sandbox:false});let a=await Pi.authenticate(['username'],()=>{});localStorage.setItem('pi_username',a.user.username);window.location.href='/dashboard.html?user='+a.user.username}catch(e){alert('Buka dari Pi Browser ya bang');b.textContent='Masuk';b.disabled=false}}
-</script>
-</body>
-</html>
+// Load foto dari localStorage
+function loadFoto(){
+  let f = localStorage.getItem('fotoMG');
+  let i = document.getElementById('img');
+  let s = document.querySelector('.foto span');
+  if(f && i){
+    i.src = f;
+    i.style.display = 'block';
+    if(s) s.style.display = 'none';
+  }
+}
+
+//
