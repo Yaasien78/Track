@@ -25,23 +25,58 @@ h1{font-size:48px;margin:0;line-height:1.1;font-weight:900;background:linear-gra
 <div class="container">
 <h1>Mall<br>Genesis</h1>
 <div class="sub">Marketplace dan Galeri NFT</div>
-<label class="foto">
+<label class="foto" onclick="document.getElementById('file').click()">
 <img id="img">
 <span>📷 Klik untuk<br>Kamera/Galeri</span>
-<input type="file" id="file" accept="image/*">
+<input type="file" id="file" accept="image/*" onchange="uploadFoto(this)">
 </label>
 <button class="btn" id="btnMasuk">Masuk</button>
 </div>
 
 <script>
-// Tunggu semua element kebaca dulu
-window.onload = function(){
+function uploadFoto(input){
+  if(input.files && input.files[0]){
+    let reader = new FileReader();
+    reader.onload = function(e){
+      localStorage.setItem('fotoMG', e.target.result);
+      document.getElementById('img').src = e.target.result;
+      document.getElementById('img').style.display = 'block';
+      document.querySelector('.foto span').style.display = 'none';
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
 
-  // 1. Load foto kalau udah pernah pilih
-  let simpan = localStorage.getItem('fotoMG');
-  let imgEl = document.getElementById('img');
-  let spanEl = document.querySelector('.foto span');
-  if(simpan && imgEl){
-    imgEl.src = simpan;
-    imgEl.style.display = 'block';
-    if(spanEl) span
+// Load foto pas buka
+setTimeout(function(){
+  let f = localStorage.getItem('fotoMG');
+  if(f){
+    document.getElementById('img').src = f;
+    document.getElementById('img').style.display = 'block';
+    document.querySelector('.foto span').style.display = 'none';
+  }
+}, 100);
+
+// Tombol masuk
+document.getElementById('btnMasuk').onclick = function(){
+  let b = this;
+  b.textContent = 'Login...';
+  b.disabled = true;
+
+  setTimeout(function(){
+    try{
+      Pi.init({version:"2.0", sandbox:false});
+      Pi.authenticate(['username'], function(){}, function(payment){
+        localStorage.setItem('pi_username', payment.user.username);
+        window.location = '/dashboard.html?user=' + payment.user.username;
+      });
+    }catch(e){
+      alert('Buka dari Pi Browser ya bang');
+      b.textContent = 'Masuk';
+      b.disabled = false;
+    }
+  }, 100);
+};
+</script>
+</body>
+  </html>
