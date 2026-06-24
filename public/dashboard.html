@@ -1,5 +1,100 @@
-<!DOCTYPE html>
-<html><body style="background:#000814;color:#FFD700;text-align:center;padding-top:100px">
-<h1>Selamat Datang <script>document.write(localStorage.getItem('pi_username') || 'Pioneer')</script></h1>
-<p>Dashboard Mall Genesis</p>
-</body></html>
+<script>
+// Ganti ke TESTNET
+Pi.init({version:"2.0", sandbox:true});
+
+// Load foto profil dari localStorage
+window.onload = function(){
+  let foto = localStorage.getItem('fotoMG');
+  let user = localStorage.getItem('pi_username') || 'User';
+  if(foto) document.getElementById('fotoProfil').src = foto;
+}
+
+// Backend dummy - nanti ganti URL Vercel lu
+const BACKEND_URL = 'https://mallgenesis.vercel.app/api';
+
+// LIKE NFT bayar 0.01 Pi Testnet
+function likeNFT(btn){
+  if(btn.disabled) return;
+  
+  Pi.createPayment({
+    amount: 0.01,
+    memo: "Like NFT Mall Genesis",
+    metadata: {type: "like", postId: Date.now()}
+  }, {
+    onReadyForServerApproval: function(paymentId){
+      // Kirim ke backend buat approve
+      fetch(BACKEND_URL + '/approve', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({paymentId: paymentId})
+      }).then(res => res.json()).then(data => {
+        console.log('Approved:', paymentId);
+      }).catch(err => console.log('Approve dummy:', err));
+    },
+    
+    onReadyForServerCompletion: function(paymentId, txid){
+      // Kirim ke backend buat complete
+      fetch(BACKEND_URL + '/complete', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({paymentId: paymentId, txid: txid})
+      }).then(res => res.json()).then(data => {
+        btn.textContent = '❤️ Liked';
+        btn.style.color = '#00ff00';
+        btn.disabled = true;
+        alert('Like berhasil! 0.01 Pi Testnet terkirim');
+      }).catch(err => {
+        btn.textContent = '❤️ Liked';
+        btn.disabled = true;
+        alert('Like berhasil! Tx: ' + txid.substring(0,10) + '...');
+      });
+    },
+    
+    onCancel: function(paymentId){
+      alert('Pembayaran dibatalkan');
+    },
+    
+    onError: function(error){
+      alert('Error: ' + error.message);
+    }
+  });
+}
+
+// MINT NFT bayar 0.01 Pi Testnet
+function mintNFT(){
+  Pi.createPayment({
+    amount: 0.01,
+    memo: "Mint NFT Mall Genesis",
+    metadata: {type: "mint"}
+  }, {
+    onReadyForServerApproval: function(paymentId){
+      fetch(BACKEND_URL + '/approve', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({paymentId: paymentId})
+      });
+    },
+    
+    onReadyForServerCompletion: function(paymentId, txid){
+      alert('Mint NFT berhasil! 0.01 Pi Testnet terkirim\nTx: ' + txid);
+      // Nanti buka form upload NFT di sini
+    },
+    
+    onCancel: function(){alert('Mint dibatalkan')},
+    onError: function(e){alert('Error: ' + e.message)}
+  });
+}
+
+// Fungsi lain tetep sama
+function keBerandaUser(username){alert('Masuk beranda @' + username)}
+function followUser(u){alert('Follow @'+u)}
+function shareNFT(){alert('Share ke beranda lu')}
+function bukaProfil(){alert('Profil lu')}
+function bukaChat(){document.getElementById('chatLayer').style.display='block'}
+function tutupChat(){document.getElementById('chatLayer').style.display='none'}
+function gantiTab(tab){alert('Ganti ke tab ' + tab)}
+function kirimChat(){
+  let txt = document.getElementById('chatText').value;
+  if(txt){document.getElementById('chatBox').innerHTML += '<p>'+txt+'</p>'; document.getElementById('chatText').value=''}
+}
+    </script>
