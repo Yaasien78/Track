@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<title>Galery NFT</title>
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+<style>
+:root{--biru:#0A1F44;--ungu:#4B0082;--emas:#DAA520;--hitam:#000;}
+body,html{margin:0;height:100%;background:#1A0033;color:#fff;font-family:'Segoe UI';display:flex;flex-direction:column;}
+.header{padding:12px 15px;display:flex;align-items:center;background:var(--biru);border-bottom:3px solid var(--emas);flex-shrink:0;}
+.back{font-size:2em;color:var(--emas);text-decoration:none;margin-right:10px;}
+.logo{font-size:1.5em;font-weight:900;color:var(--emas);text-align:center;flex-grow:1;}
+.main{flex-grow:1;overflow-y:auto;padding:15px;}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:15px;}
+.card{background:var(--ungu);border:2px solid var(--emas);border-radius:12px;overflow:hidden;text-align:center;}
+.card img{width:100%;height:150px;object-fit:cover;background:#333;}
+.card .nama{font-weight:700;padding:10px 5px;font-size:0.9em;}
+.footer-mint{position:sticky;bottom:0;width:100%;padding:15px;background:var(--biru);border-top:3px solid var(--emas);text-align:center;flex-shrink:0;box-sizing:border-box;}
+.btn-mint{width:100%;max-width:400px;background:var(--emas);color:var(--hitam);border:none;border-radius:12px;padding:15px;font-weight:900;font-size:1.1em;cursor:pointer;}
+.btn-mint:disabled{background:#555;color:#aaa;cursor:not-allowed;}
+.status{font-size:0.8em;color:#aaa;margin-top:8px;}
+</style>
+</head>
+<body>
+<header class="header">
+  <a href="menu.html" class="back">←</a>
+  <div class="logo">4. Galery NFT</div>
+  <div style="width:2em"></div>
+</header>
+
+<main class="main">
+  <div class="grid" id="nftGrid">
+    <!-- NFT SAMPLE -->
+    <div class="card"><img src="https://placehold.co/300x300/DAA520/000?text=GENESIS+1"><div class="nama">Genesis #001</div></div>
+    <div class="card"><img src="https://placehold.co/300x300/DAA520/000?text=GENESIS+2"><div class="nama">Genesis #002</div></div>
+    <div class="card"><img src="https://placehold.co/300x300/DAA520/000?text=GENESIS+3"><div class="nama">Genesis #003</div></div>
+    <div class="card"><img src="https://placehold.co/300x300/DAA520/000?text=GENESIS+4"><div class="nama">Genesis #004</div></div>
+  </div>
+</main>
+
+<footer class="footer-mint">
+  <button class="btn-mint" id="mintBtn">Mint NFT Genesis - 0.01 Pi</button>
+  <div class="status" id="status">Bayar 0.01 Pi untuk Mint 1 NFT Random</div>
+</footer>
+
+<script src="menu.js"></script>
+<script>
+Pi.init({ version: "2.0", sandbox: false }); // GANTI TRUE KALO MAU TEST
+
+let mintBtn = document.getElementById('mintBtn');
+let status = document.getElementById('status');
+let username = 'Tamu';
+
+let userData = localStorage.getItem('pi_user');
+if(userData){ username = JSON.parse(userData).username; } else {
+  mintBtn.disabled = true;
+  status.textContent = 'Login Dulu di Halaman Utama';
+}
+
+mintBtn.onclick = async () => {
+  mintBtn.disabled = true;
+  status.textContent = 'Buka Pop-up Pi...';
+  
+  const paymentData = {
+    amount: 0.01,
+    memo: `Mint NFT Genesis by @${username}`,
+    metadata: { app: 'MallGenesis', type: 'nft_mint', user: username }
+  };
+
+  const callbacks = {
+    onReadyForServerApproval: (paymentId) => { 
+      status.textContent = `Approved: ${paymentId}. Nunggu complete...`; 
+    },
+    onReadyForServerCompletion: (paymentId, txid) => { 
+      status.textContent = `SUKSES! TXID: ${txid.slice(0,10)}...`; 
+      alert(`Mint Berhasil Bang 🔥\nTXID: ${txid}\nNFT lu masuk Galery V=44`);
+      // V=44: SIMPEN TXID KE DB + GENERATE GAMBAR NFT
+    },
+
