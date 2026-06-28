@@ -16,164 +16,51 @@
     height: 100vh;
     overflow: hidden;
   }
-  .chat-container { 
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-  }
-  .login-box { 
-    padding: 12px;
-    background: #111827;
-    text-align: center;
-    border-bottom: 2px solid #fbbf24;
-  }
-  .login-btn { 
-    background: #fbbf24;
-    color: #000;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 10px;
-    font-weight: bold;
-    font-size: 16px;
-    width: 100%;
-    max-width: 320px;
-  }
-  .user-info {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    font-size: 14px;
-  }
-  .user-info img {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    border: 2px solid #fbbf24;
-  }
-  .tabs { 
-    display: flex;
-    background: #000;
-    flex-shrink: 0;
-  }
-  .tab { 
-    flex: 1;
-    padding: 14px;
-    text-align: center;
-    font-weight: bold;
-    color: #aaa;
-    border-bottom: 3px solid transparent;
-    cursor: pointer;
-  }
-  .tab.active { 
-    color: #fbbf24;
-    border-bottom: 3px solid #fbbf24;
-    background: #111827;
-  }
-  .chat-box { 
-    flex: 1;
-    overflow-y: auto;
-    padding: 10px;
-    background: #0a0f1e;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .msg {
-    max-width: 75%;
-    padding: 8px 12px;
-    border-radius: 12px;
-    font-size: 14px;
-    line-height: 1.4;
-  }
-  .msg.me {
-    background: #fbbf24;
-    color: #000;
-    align-self: flex-end;
-    border-bottom-right-radius: 4px;
-  }
-  .msg.other {
-    background: #1f2937;
-    color: #fff;
-    align-self: flex-start;
-    border-bottom-left-radius: 4px;
-  }
-  .msg .name {
-    font-size: 11px;
-    font-weight: bold;
-    opacity: 0.8;
-    margin-bottom: 2px;
-  }
-  .input-box { 
-    display: flex;
-    padding: 10px;
-    background: #000;
-    border-top: 2px solid #fbbf24;
-    gap: 8px;
-  }
-  .input-box input { 
-    flex: 1;
-    background: #1f2937;
-    border: none;
-    color: #fff;
-    padding: 12px;
-    border-radius: 8px;
-    font-size: 14px;
-  }
-  .input-box input:disabled {
-    opacity: 0.5;
-  }
-  .input-box button { 
-    background: #fbbf24;
-    border: none;
-    color: #000;
-    font-weight: bold;
-    padding: 0 20px;
-    border-radius: 8px;
-    font-size: 16px;
-  }
-  .input-box button:disabled {
-    opacity: 0.5;
-  }
-  footer { 
-    text-align: center;
-    padding: 8px;
-    font-size: 12px;
-    color: #fbbf24;
-    background: #000;
-    flex-shrink: 0;
-  }
+  .chat-container { display: flex; flex-direction: column; height: 100vh; }
+  .login-box { padding: 12px; background: #111827; text-align: center; border-bottom: 2px solid #fbbf24; }
+  .login-btn { background: #fbbf24; color: #000; border: none; padding: 12px 24px; border-radius: 10px; font-weight: bold; font-size: 16px; width: 100%; max-width: 320px; }
+  .user-info { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 14px; }
+  .user-info img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #fbbf24; }
+  .tabs { display: flex; background: #000; flex-shrink: 0; }
+  .tab { flex: 1; padding: 14px; text-align: center; font-weight: bold; color: #aaa; border-bottom: 3px solid transparent; cursor: pointer; }
+  .tab.active { color: #fbbf24; border-bottom: 3px solid #fbbf24; background: #111827; }
+  .chat-box { flex: 1; overflow-y: auto; padding: 10px; background: #0a0f1e; display: flex; flex-direction: column; gap: 8px; }
+  .msg { max-width: 75%; padding: 8px 12px; border-radius: 12px; font-size: 14px; line-height: 1.4; }
+  .msg.me { background: #fbbf24; color: #000; align-self: flex-end; border-bottom-right-radius: 4px; }
+  .msg.other { background: #1f2937; color: #fff; align-self: flex-start; border-bottom-left-radius: 4px; }
+  .msg .name { font-size: 11px; font-weight: bold; opacity: 0.8; margin-bottom: 2px; }
+  .input-box { display: flex; padding: 10px; background: #000; border-top: 2px solid #fbbf24; gap: 8px; }
+  .input-box input { flex: 1; background: #1f2937; border: none; color: #fff; padding: 12px; border-radius: 8px; font-size: 14px; }
+  .input-box input:disabled { opacity: 0.5; }
+  .input-box button { background: #fbbf24; border: none; color: #000; font-weight: bold; padding: 0 20px; border-radius: 8px; font-size: 16px; }
+  .input-box button:disabled { opacity: 0.5; }
+  footer { text-align: center; padding: 8px; font-size: 12px; color: #fbbf24; background: #000; flex-shrink: 0; }
 </style>
 </head>
 <body>
 <div class="chat-container">
-  
   <div class="login-box" id="loginBox">
     <button class="login-btn" id="loginBtn">Login dengan Pi</button>
   </div>
-
   <div class="tabs">
     <div class="tab active" data-room="public">Public</div>
     <div class="tab" data-room="team">Team</div>
     <div class="tab" data-room="dm">DM</div>
   </div>
-
   <div class="chat-box" id="chatBox">
     <div style="text-align:center; color:#666; margin-top:20px;">Login dulu buat chat...</div>
   </div>
-
   <div class="input-box">
     <input id="msgInput" placeholder="Login dulu buat chat..." disabled>
     <button id="sendBtn" disabled>K</button>
   </div>
-
   <footer>My Track V-43 © 2026 | Swipe Kiri/Kanan</footer>
-
 </div>
 
 <script>
-const SUPABASE_URL = 'https://xxx.supabase.co'; // GANTI URL LU
-const SUPABASE_ANON_KEY = 'xxx'; // GANTI KEY LU
+// UDAH GUA ISI URL + KEY LU
+const SUPABASE_URL = 'https://aecidmcsdtkshjdnrrrd.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_Ha3M2Q6FzUGaTVV4rtnong_lkHZrQWD';
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let currentUser = null;
@@ -187,78 +74,98 @@ const msgInput = document.getElementById('msgInput');
 const sendBtn = document.getElementById('sendBtn');
 const tabs = document.querySelectorAll('.tab');
 
-// 1. LOGIN PI
+// INIT PI SDK
+window.onload = () => {
+  Pi.init({ version: "2.0", sandbox: false }); 
+  checkIfLoggedIn();
+};
+
+async function checkIfLoggedIn() {
+  const { data: { session } = await supabase.auth.getSession();
+  if(session) {
+    currentUser = session.user;
+    loginBox.innerHTML = `<div class="user-info"><img src="https://ui-avatars.com/api/?name=${currentUser.user_metadata.username}"><span>@${currentUser.user_metadata.username}</span> <button onclick="logout()" style="background:transparent;border:1px solid #fbbf24;color:#fbbf24;border-radius:6px;padding:4px 8px;">Logout</button></div>`;
+    enableChat();
+  }
+}
+
 loginBtn.onclick = async () => {
+  if (typeof Pi === 'undefined') {
+    alert('Buka di Pi Browser ya bro. Chrome gabisa login Pi.');
+    return;
+  }
   try {
-    const scopes = ['username'];
+    loginBtn.innerText = 'Loading...';
+    loginBtn.disabled = true;
+    const scopes = ['username', 'payments'];
     const authResult = await Pi.authenticate(scopes, onIncompletePaymentFound);
-    
     const { data, error } = await supabase.auth.signInWithIdToken({
       provider: 'pi',
       token: authResult.accessToken,
     });
-
     if (error) throw error;
     currentUser = data.user;
-    loginBox.innerHTML = `<div class="user-info"><img src="https://ui-avatars.com/api/?name=${currentUser.user_metadata.username}"><span>@${currentUser.user_metadata.username}</span></div>`;
-    msgInput.disabled = false;
-    sendBtn.disabled = false;
-    msgInput.placeholder = 'Ketik pesan...';
-    loadMessages();
-    subscribeRoom();
+    loginBox.innerHTML = `<div class="user-info"><img src="https://ui-avatars.com/api/?name=${currentUser.user_metadata.username}"><span>@${currentUser.user_metadata.username}</span> <button onclick="logout()" style="background:transparent;border:1px solid #fbbf24;color:#fbbf24;border-radius:6px;padding:4px 8px;">Logout</button></div>`;
+    enableChat();
   } catch (e) {
     alert('Login gagal: ' + e.message);
+    loginBtn.innerText = 'Login dengan Pi';
+    loginBtn.disabled = false;
   }
 };
 
-function onIncompletePaymentFound(payment) {console.log(payment);}
+function logout() { supabase.auth.signOut(); location.reload(); }
+function enableChat() {
+  msgInput.disabled = false; sendBtn.disabled = false;
+  msgInput.placeholder = 'Ketik pesan...'; chatBox.innerHTML = '';
+  loadMessages(); subscribeRoom();
+}
+function onIncompletePaymentFound(payment) { console.log("Payment:", payment); }
 
-// 2. GANTI TAB
 tabs.forEach(tab => {
   tab.onclick = () => {
+    if(!currentUser) return alert('Login dulu bro');
     tabs.forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
     currentRoom = tab.dataset.room;
     chatBox.innerHTML = '';
     if(channel) supabase.removeChannel(channel);
-    loadMessages();
-    subscribeRoom();
+    loadMessages(); subscribeRoom();
   }
 });
 
-// 3. KIRIM PESAN
 sendBtn.onclick = sendMessage;
 msgInput.onkeypress = e => { if(e.key === 'Enter') sendMessage(); }
 
 async function sendMessage() {
   const text = msgInput.value.trim();
   if(!text || !currentUser) return;
-  await supabase.from('chat_messages').insert({
+  const { error } = await supabase.from('chat_messages').insert({
     room: currentRoom,
+    team_id: currentRoom === 'team' ? 'team1' : null, // GANTI 'team1' pake team_id lu
     uid: currentUser.id,
     username: currentUser.user_metadata.username,
     avatar_url: `https://ui-avatars.com/api/?name=${currentUser.user_metadata.username}`,
     message: text
   });
+  if(error) alert('Gagal kirim: ' + error.message);
   msgInput.value = '';
 }
 
-// 4. LOAD PESAN LAMA
 async function loadMessages() {
-  const { data } = await supabase.from('chat_messages')
-    .select('*')
-    .eq('room', currentRoom)
-    .order('created_at', { ascending: true })
-    .limit(50);
-  chatBox.innerHTML = '';
+  let query = supabase.from('chat_messages').select('*').order('created_at', { ascending: true }).limit(50);
+  if(currentRoom === 'public') query = query.eq('room', 'public');
+  if(currentRoom === 'team') query = query.eq('room', 'team').eq('team_id', 'team1');
+  if(currentRoom === 'dm') query = query.eq('room', 'dm').or(`uid.eq.${currentUser.id}`); 
+  const { data } = await query;
+  chatBox.innerHTML = data.length ? '' : '<div style="text-align:center; color:#666; margin-top:20px;">Belum ada chat</div>';
   data.forEach(addMessage);
 }
 
-// 5. REALTIME
 function subscribeRoom() {
-  channel = supabase.channel('room:' + currentRoom)
-    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages', filter: `room=eq.${currentRoom}` }, 
-    payload => addMessage(payload.new))
+  channel = supabase.channel('room:' + currentRoom + Date.now())
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages' }, 
+    payload => { if(payload.new.room === currentRoom) addMessage(payload.new) })
     .subscribe();
 }
 
@@ -271,4 +178,4 @@ function addMessage(msg) {
 }
 </script>
 </body>
-  </html>
+</html>
