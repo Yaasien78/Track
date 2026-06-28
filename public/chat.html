@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
 <title>Chat 2-3-4</title>
-<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+<script src="https://sdk.minepi.com/pi-sdk.js"></script> <!-- LOAD DULU -->
 <style>
 :root{--biru:#0A1F44;--ungu:#4B0082;--emas:#DAA520;--hitam:#000;--bg:#1A0033;}
 html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:#fff;font-family:'Segoe UI';}
@@ -13,24 +13,24 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:#fff;f
 .slider-wrap::-webkit-scrollbar{display:none;}
 .page{width:100vw;height:100vh;flex-shrink:0;scroll-snap-align:start;display:flex;flex-direction:column;overflow-y:auto;background:var(--bg);}
 
-/* HEADER DIUBAH: 3 TAB DI DALAM */
-.header{padding:10px 8px;display:flex;flex-direction:column;gap:8px;background:var(--biru);border-bottom:3px solid var(--emas);position:sticky;top:0;z-index:10;flex-shrink:0;}
+/* HEADER DI PRESS: padding kecil banget */
+.header{padding:6px 6px 4px 6px;display:flex;flex-direction:column;gap:4px;background:var(--biru);border-bottom:2px solid var(--emas);position:sticky;top:0;z-index:10;flex-shrink:0;}
 .header-top{display:flex;align-items:center;width:100%;}
-.back{font-size:2em;color:var(--emas);text-decoration:none;margin-right:10px;cursor:pointer;}
-.logo{font-size:1.5em;font-weight:900;color:var(--emas);text-align:center;flex-grow:1;} /* JUDUL 3.CHAT DIHAPUS */
-.tab-btns{display:flex;gap:8px;width:100%;padding:0 4px;}
-.tab-btns button{flex:1;background:var(--ungu);color:#fff;border:2px solid var(--emas);border-radius:12px;padding:12px 5px;font-weight:700;font-size:1em;cursor:pointer;}
+.back{font-size:1.8em;color:var(--emas);text-decoration:none;margin-right:8px;cursor:pointer;line-height:1;}
+.tab-btns{display:flex;gap:6px;width:100%;padding:0 2px;}
+.tab-btns button{flex:1;background:var(--ungu);color:#fff;border:2px solid var(--emas);border-radius:10px;padding:8px 2px;font-weight:700;font-size:0.95em;cursor:pointer;} /* DIPENDEKIN */
 .tab-btns button.active{background:var(--emas);color:var(--hitam);}
 
-.main{padding:15px;max-width:600px;margin:0 auto;flex:1;width:100%;box-sizing:border-box;display:flex;flex-direction:column;}
-.footer{padding:15px;font-size:0.8em;color:#aaa;text-align:center;flex-shrink:0; border-top:3px solid var(--emas);}
+.main{padding:10px;max-width:600px;margin:0 auto;flex:1;width:100%;box-sizing:border-box;display:flex;flex-direction:column;}
 
-/* KOTAK DIPENDEKIN */
-#chat-box{flex:1;overflow-y:auto;background:#2a0044;border:2px solid var(--emas);border-radius:12px;padding:15px;text-align:left;margin-bottom:10px;height: calc(100vh - 210px);} /* KUNCI: Biar tombol kirim keliatan */
-#user-list{background:#2a0044;border:2px solid var(--emas);border-radius:12px;padding:15px;margin-bottom:10px;display:none;text-align:left;font-size:1em;max-height:18vh;overflow-y:auto;}
-.chat-input-wrap{display:flex;gap:8px;margin-top:auto;}
-#input{flex:1;background:#2a0044;color:#fff;border:2px solid var(--emas);border-radius:12px;padding:12px;font-weight:700;font-size:1em;}
-#kirim{background:var(--emas);color:var(--hitam);border:2px solid var(--emas);border-radius:12px;padding:12px 20px;font-weight:700;font-size:1em;cursor:pointer;aspect-ratio:1/1;} /* SEGI EMPAT */
+/* FOOTER DI PRESS: padding kiri kanan 0 */
+.footer{padding:8px 0; font-size:0.8em;color:#aaa;text-align:center;flex-shrink:0; border-top:2px solid var(--emas); width:100vw; box-sizing:border-box;}
+
+#chat-box{flex:1;overflow-y:auto;background:#2a0044;border:2px solid var(--emas);border-radius:12px;padding:10px;text-align:left;margin-bottom:8px;height: calc(100vh - 180px);} /* KUNCI: 180px biar muat semua */
+#user-list{background:#2a0044;border:2px solid var(--emas);border-radius:12px;padding:10px;margin-bottom:8px;display:none;text-align:left;font-size:0.95em;max-height:15vh;overflow-y:auto;}
+.chat-input-wrap{display:flex;gap:6px;margin-top:auto;}
+#input{flex:1;background:#2a0044;color:#fff;border:2px solid var(--emas);border-radius:12px;padding:10px;font-weight:700;font-size:0.95em;}
+#kirim{background:var(--emas);color:var(--hitam);border:2px solid var(--emas);border-radius:12px;width:46px;height:46px;font-weight:700;font-size:1.2em;cursor:pointer;flex-shrink:0;} /* SEGI EMPAT PASTI */
 .main-dummy{text-align:center;padding-top:40px;font-size:1.2em;color:#aaa;}
 </style>
 </head>
@@ -38,38 +38,26 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:#fff;f
 
   <div class="slider-wrap" id="slider">
 
-    <!-- HAL 2. MAP GOOGLE -->
-    <div class="page" id="p2">
-      <header class="header">
-        <div class="header-top"><a href="menu.html" class="back">←</a><div class="logo">2. Map Google</div><div style="width:2em"></div></div>
-      </header>
-      <main class="main"><div class="main-dummy">Isi Map Google Disini<br><small>Swipe Kanan ke Chat</small></div></main>
-      <footer class="footer">Swipe Kiri/Kanan</footer>
-    </div>
-    
+    <!-- HAL 2. MAP -->
+    <div class="page"><header class="header"><div class="header-top"><a href="menu.html" class="back">←</a><div style="flex-grow:1"></div><div style="width:2em"></div></div></header><main class="main"><div class="main-dummy">Map<br><small>Swipe Kanan</small></div></main><footer class="footer">Swipe Kiri/Kanan</footer></div>
+
     <!-- HAL 3. CHAT -->
     <div class="page" id="p3">
       <header class="header">
-        <div class="header-top"><a href="menu.html" class="back">←</a><div class="logo"></div><div style="width:2em"></div></div> <!-- JUDUL KOSONG -->
-        <div class="tab-btns"><button id="public" onclick="setMode('public')">Public</button><button id="team" onclick="setMode('team')">Team</button><button id="privasi" onclick="setMode('privasi')">Privasi</button></div>
+        <div class="header-top"><a href="menu.html" class="back">←</a><div style="flex-grow:1"></div><div style="width:2em"></div></div>
+        <div class="tab-btns"><button id="public">Public</button><button id="team">Team</button><button id="privasi">Privasi</button></div>
       </header>
       <main class="main">
         <div id="app" style="display:flex; flex-direction:column; flex:1;">
-          <div id="user-list"></div><div id="chat-box">Loading...</div>
-          <div class="chat-input-wrap" id="inputWrap"><input id="input" placeholder="Ketik pesan..." onkeypress="if(event.key==='Enter') kirimPesan()"><button id="kirim" onclick="kirimPesan()">➤</button></div>
+          <div id="user-list"></div><div id="chat-box">Auto login...</div>
+          <div class="chat-input-wrap"><input id="input" placeholder="Ketik pesan..."><button id="kirim">➤</button></div>
         </div>
       </main>
       <footer class="footer">Swipe Kiri/Kanan</footer>
     </div>
 
     <!-- HAL 4. NFT -->
-    <div class="page" id="p4">
-      <header class="header">
-        <div class="header-top"><a href="menu.html" class="back">←</a><div class="logo">4. Galery NFT</div><div style="width:2em"></div></div>
-      </header>
-      <main class="main"><div class="main-dummy">Isi Galery NFT Disini<br><small>Swipe Kiri ke Chat</small></div></main>
-      <footer class="footer">Swipe Kiri/Kanan</footer>
-    </div>
+    <div class="page"><header class="header"><div class="header-top"><a href="menu.html" class="back">←</a><div style="flex-grow:1"></div><div style="width:2em"></div></div></header><main class="main"><div class="main-dummy">NFT<br><small>Swipe Kiri</small></div></main><footer class="footer">Swipe Kiri/Kanan</footer></div>
 
   </div>
 
@@ -79,17 +67,25 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:#fff;f
   const SUPABASE_KEY = 'sb_publishable_Ha3M2Q6FzUGaTVV4rtnong_lkHZrQWD'
   const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
   let currentUser = null; let currentMode = 'public'; let currentReceiver = null; let channel = null;
-  
-  // AUTO LOGIN PI TANPA TOMBOL
-  window.addEventListener('load', async () => { 
-    document.getElementById('slider').scrollLeft = window.innerWidth; 
-    try { 
-      Pi.init({ version: "2.0", sandbox: true }); 
-      const auth = await Pi.authenticate(['username']);
+
+  // KUNCI AUTO NYAMBUNG: Tunggu SDK ready dulu baru init
+  window.onload = async () => {
+    document.getElementById('slider').scrollLeft = window.innerWidth;
+    document.getElementById('kirim').onclick = kirimPesan;
+    document.getElementById('input').onkeypress = (e)=>{if(e.key==='Enter') kirimPesan()};
+    document.getElementById('public').onclick = ()=>setMode('public');
+    document.getElementById('team').onclick = ()=>setMode('team');
+    document.getElementById('privasi').onclick = ()=>setMode('privasi');
+
+    if (typeof Pi === 'undefined') { document.getElementById('chat-box').innerHTML = 'Error: Buka di Pi Browser'; return; }
+
+    try {
+      Pi.init({ version: "2.0", sandbox: true }); // INIT DULU
+      const auth = await Pi.authenticate(['username']); // BARU AUTH
       currentUser = { uid: auth.user.uid, username: auth.user.username };
-      setMode('public');
+      setMode('public'); // AUTO MASUK PUBLIC
     } catch(e) { document.getElementById('chat-box').innerHTML = 'Login Pi gagal: ' + e.message }
-  });
+  };
 
   const TABLE_MAP = { public: 'message_public', team: 'message_team', privasi: 'message_dm' };
   window.setMode = async (mode) => {
@@ -101,16 +97,16 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:#fff;f
     else { document.getElementById('user-list').style.display = 'none'; loadMessages(); subscribeRealtime(); }
   }
   async function loadUsers() {
-    const box = document.getElementById('user-list'); box.innerHTML = 'Ambil data user...';
+    const box = document.getElementById('user-list'); box.innerHTML = 'Ambil data...';
     const { data, error } = await supabase.from('message_public').select('pi_uid, pi_username').limit(50);
     if(error) { box.innerHTML = 'Error: ' + error.message; return; }
     const unique = [...new Map(data.map(i => [i.pi_uid, i])).values()].filter(u => u.pi_uid!== currentUser.uid);
-    box.innerHTML = ''; unique.forEach(u => { const div = document.createElement('div'); div.textContent = u.pi_username; div.style.padding='8px 0'; div.style.borderBottom='1px solid #444'; div.style.cursor='pointer'; div.onclick = () => { currentReceiver = {uid: u.pi_uid, username: u.pi_username}; box.style.display = 'none'; document.getElementById('chat-box').innerHTML = `<p style="text-align:center;color:var(--emas)">Chat dengan ${u.pi_username}</p>`; loadMessages(); subscribeRealtime(); }; box.appendChild(div); });
+    box.innerHTML = ''; unique.forEach(u => { const div = document.createElement('div'); div.textContent = u.pi_username; div.style.padding='6px 0'; div.style.borderBottom='1px solid #444'; div.style.cursor='pointer'; div.onclick = () => { currentReceiver = {uid: u.pi_uid, username: u.pi_username}; box.style.display = 'none'; document.getElementById('chat-box').innerHTML = `<p style="text-align:center;color:var(--emas)">Chat ${u.pi_username}</p>`; loadMessages(); subscribeRealtime(); }; box.appendChild(div); });
   }
   async function loadMessages() {
     const box = document.getElementById('chat-box'); const table = TABLE_MAP[currentMode];
-    let query = supabase.from(table).select('*').order('created_at', {ascending: true}).limit(100);
-    if (currentMode === 'privasi' && currentReceiver) { query = query.or(`and(sender_uid.eq.${currentUser.uid},receiver_uid.eq.${currentReceiver.uid}),and(sender_uid.eq.${currentReceiver.uid},receiver_uid.eq.${currentUser.uid})`); } else if(currentMode === 'privasi') { box.innerHTML = 'Pilih orang dulu'; return; }
+    let query = supabase.from(table).select('*').order('created_at', {ascending: true}).limit(50);
+    if (currentMode === 'privasi' && currentReceiver) { query = query.or(`and(sender_uid.eq.${currentUser.uid},receiver_uid.eq.${currentReceiver.uid}),and(sender_uid.eq.${currentReceiver.uid},receiver_uid.eq.${currentUser.uid})`); } else if(currentMode === 'privasi') { box.innerHTML = 'Pilih orang'; return; }
     const { data, error } = await query; if(error) { box.innerHTML = 'Error: ' + error.message; return; }
     box.innerHTML = ''; data.forEach(renderMsg); box.scrollTop = box.scrollHeight;
   }
@@ -124,15 +120,15 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:#fff;f
   }
   function renderMsg(msg) {
     const box = document.getElementById('chat-box'); const name = msg.pi_username || msg.sender_username || 'Anon';
-    const div = document.createElement('div'); div.style.margin = '6px 0'; div.innerHTML = `<b style="color:var(--emas)">${name}:</b> ${msg.text}`;
+    const div = document.createElement('div'); div.style.margin = '5px 0'; div.innerHTML = `<b style="color:var(--emas)">${name}:</b> ${msg.text}`;
     box.appendChild(div); box.scrollTop = box.scrollHeight;
   }
   window.kirimPesan = async () => {
     const input = document.getElementById('input'); const text = input.value.trim(); if(!text ||!currentUser) return; input.value = '';
     const table = TABLE_MAP[currentMode];
-    if(currentMode === 'public' || currentMode === 'team') { const { error } = await supabase.from(table).insert({text, pi_uid: currentUser.uid, pi_username: currentUser.username}); if(error) alert('Gagal kirim: ' + error.message); }
-    if(currentMode === 'privasi') { if(!currentReceiver) return alert('Pilih orang dulu'); const { error } = await supabase.from(table).insert({text, sender_uid: currentUser.uid, receiver_uid: currentReceiver.uid, sender_username: currentUser.username}); if(error) alert('Gagal kirim DM: ' + error.message); }
+    if(currentMode === 'public' || currentMode === 'team') { const { error } = await supabase.from(table).insert({text, pi_uid: currentUser.uid, pi_username: currentUser.username}); if(error) alert('Gagal: ' + error.message); }
+    if(currentMode === 'privasi') { if(!currentReceiver) return alert('Pilih orang'); const { error } = await supabase.from(table).insert({text, sender_uid: currentUser.uid, receiver_uid: currentReceiver.uid, sender_username: currentUser.username}); if(error) alert('Gagal DM: ' + error.message); }
   }
 </script>
 </body>
-          </html>
+        </html>
