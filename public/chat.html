@@ -1,83 +1,150 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <script src="https://sdk.minepi.com/pi-sdk.js"></script>
   <style>
-    :root { --gold: #FFD700; --bg: #1a0033; --box: #2a0044; }
-    body{background:var(--bg);color:#fff;font-family:sans-serif;margin:0;padding:0;height:100vh;display:flex;flex-direction:column}
-    
-    /* 1. HEAD = GARIS EMAS + 3 TOMBOL DI DALAM */
-    header{
-      border-bottom: 3px solid var(--gold);
-      padding:10px;
-      background:#0f001f;
+    :root { --gold: #FFD700; --biru: #1e1eb8; --bg: #0f0f3a; --box: #2a0044; }
+    html, body{margin:0;padding:0;height:100%;overflow:hidden;background:var(--bg);color:#fff;font-family:sans-serif; padding-bottom: env(safe-area-inset-bottom);}
+
+    /* SLIDER 5 HALAMAN */
+ .slider-container{
+      display:flex;
+      width:500vw; /* 5 halaman */
+      height:100vh;
+      overflow-x:scroll;
+      scroll-snap-type:x mandatory;
+      -webkit-overflow-scrolling:touch;
+      scrollbar-width:none;
+    }
+ .slider-container::-webkit-scrollbar{display:none;}
+ .page{
+      width:100vw;
+      height:100vh;
+      flex-shrink:0;
+      scroll-snap-align:center;
+      display:flex;
+      flex-direction:column;
+      position:relative;
+      background:var(--bg);
+    }
+
+    /* HEADER BIRU + GARIS EMAS KAYA DI FOTO */
+  .header{
+      background:var(--biru);
+      padding:15px 10px;
+      border-bottom:3px solid var(--gold);
       text-align:center;
+      position:relative;
       flex-shrink:0;
     }
-    header h3{margin:0 0 8px 0;color:var(--gold);font-size:18px}
-  .tab-btns{display:flex;gap:6px;justify-content:center}
-  .tab-btns button{flex:1; background:#6a0dad;color:#fff;border:1px solid var(--gold);border-radius:10px;padding:10px 5px;font-weight:bold;font-size:14px;transition:.2s}
-  .tab-btns button.active{box-shadow:0 0 15px var(--gold); background:var(--gold); color:#000}
+ .header h2{margin:0;color:var(--gold);font-size:22px}
+ .back-btn{position:absolute;left:15px;top:50%;transform:translateY(-50%);font-size:24px;color:var(--gold);cursor:pointer}
 
-    /* BODY */
+    /* HEAD CHAT DOANG */
+    header.chat-head{border-bottom: 3px solid var(--gold);padding:10px;background:#0f001f;flex-shrink:0;}
+ .tab-btns{display:flex;gap:6px}
+ .tab-btns button{flex:1; background:#6a0dad;color:#fff;border:1px solid var(--gold);border-radius:10px;padding:12px 5px;font-weight:bold;font-size:14px;}
+ .tab-btns button.active{box-shadow:0 0 15px var(--gold); background:var(--gold); color:#000}
+
+    /* BODY CHAT */
     main{flex:1; display:flex; flex-direction:column; overflow:hidden;}
-    #chat-box{flex:1;overflow-y:auto;background:var(--box);border-radius:12px;padding:10px;margin:10px;text-align:left}
+    #chat-box{flex:1;overflow-y:auto;background:var(--box);border-radius:12px;padding:10px;margin:10px;text-align:left; max-height: calc(100vh - 280px);}
     #user-list{height:15vh;overflow-y:auto;background:var(--box);border-radius:12px;padding:10px;margin:0 10px 10px 10px;display:none;text-align:left}
 
-    /* 3. FOOTER = INPUT + KIRIM SEJAJAR + GARIS EMAS ATAS */
-    footer{
-      border-top: 3px solid var(--gold);
-      padding:10px;
-      background:#0f001f;
-      display:flex;
-      gap:8px;
-      align-items:center;
-      flex-shrink:0;
-    }
+    /* FOOTER CHAT */
+    footer{border-top: 3px solid var(--gold);padding:10px;padding-bottom: calc(10px + env(safe-area-inset-bottom));background:#0f001f;display:flex;gap:8px;align-items:center;flex-shrink:0;}
     input{flex:1;padding:12px;border-radius:10px;border:1px solid var(--gold);background:#3a0055;color:#fff;font-size:16px}
     #kirim{padding:12px 15px;background:var(--gold);color:#000;border:none;border-radius:10px;font-weight:bold}
-    
+
     #loginBtn{background:orange;color:#000;width:calc(100% - 20px);margin:10px;padding:12px;border:none;border-radius:10px;font-weight:bold;font-size:16px}
+
+    /* KONTEN HALAMAN LAIN KAYA TOMBOL DI FOTO */
+ .menu-list{padding:15px}
+ .menu-btn{background:var(--biru);border:2px solid var(--gold);border-radius:12px;padding:15px;margin-bottom:12px;font-size:18px;font-weight:bold;display:flex;align-items:center;gap:12px}
+ .footer-txt{position:absolute;bottom:10px;width:100%;text-align:center;color:var(--gold);font-size:12px}
   </style>
 </head>
 <body>
-  
-  <!-- HEAD -->
-  <header>
-    <h3>My Track V=43 © 2026</h3>
-    <div class="tab-btns" id="appTabs" style="display:none">
-      <button id="public" onclick="setMode('public')">Public</button>
-      <button id="team" onclick="setMode('team')">Team</button>
-      <button id="privasi" onclick="setMode('privasi')">Privasi</button>
+
+  <!-- SLIDER 5 HALAMAN -->
+  <div class="slider-container" id="slider">
+
+    <!-- 1. PROFIL -->
+    <div class="page">
+      <div class="header"><span class="back-btn">←</span><h2>Menu</h2></div>
+      <div class="menu-list">
+        <div class="menu-btn">👤 1. Profil</div>
+      </div>
+      <div class="footer-txt">My Track V=43 © 2026 | Swipe</div>
     </div>
-  </header>
 
-  <button id="loginBtn" onclick="loginPi()">1. Login Pi Dulu</button>
+    <!-- 2. MAP GOOGLE -->
+    <div class="page">
+      <div class="header"><span class="back-btn">←</span><h2>Menu</h2></div>
+      <div class="menu-list">
+        <div class="menu-btn">🗺️ 2. Map Google</div>
+      </div>
+      <div class="footer-txt">My Track V=43 © 2026 | Swipe</div>
+    </div>
 
-  <!-- BODY -->
-  <main id="app" style="display:none">
-    <div id="user-list"></div>
-    <div id="chat-box">Silakan pilih tab...</div>
-  </main>
-  
-  <!-- FOOT -->
-  <footer id="appFoot" style="display:none">
-    <input id="input" placeholder="Ketik pesan...">
-    <button id="kirim">Kirim</button>
-  </footer>
+    <!-- 3. CHAT = TENGAH -->
+    <div class="page" id="chat-page">
+      <div class="header"><span class="back-btn">←</span><h2>Menu</h2></div>
+      <header class="chat-head">
+        <div class="tab-btns" id="appTabs" style="display:none">
+          <button id="public" onclick="setMode('public')">Public</button>
+          <button id="team" onclick="setMode('team')">Team</button>
+          <button id="privasi" onclick="setMode('privasi')">Privasi</button>
+        </div>
+      </header>
+      <button id="loginBtn" onclick="loginPi()">1. Login Pi Dulu</button>
+      <main id="app" style="display:none">
+        <div id="user-list"></div>
+        <div id="chat-box">Silakan pilih tab...</div>
+      </main>
+      <footer id="appFoot" style="display:none">
+        <input id="input" placeholder="Ketik pesan...">
+        <button id="kirim">Kirim</button>
+      </footer>
+    </div>
+
+    <!-- 4. GALERI NFT -->
+    <div class="page">
+      <div class="header"><span class="back-btn">←</span><h2>Menu</h2></div>
+      <div class="menu-list">
+        <div class="menu-btn">🖼️ 4. Galery NFT</div>
+      </div>
+      <div class="footer-txt">My Track V=43 © 2026 | Swipe</div>
+    </div>
+
+    <!-- 5. MARKETPLACE -->
+    <div class="page">
+      <div class="header"><span class="back-btn">←</span><h2>Menu</h2></div>
+      <div class="menu-list">
+        <div class="menu-btn">🛒 5. Marketplace</div>
+      </div>
+      <div class="footer-txt">My Track V=43 © 2026 | Swipe</div>
+    </div>
+
+  </div>
 
 <script type="module">
   import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-  
-  const SUPABASE_URL = 'https://dwcgozbbqkcimzndfqaf.supabase.co' // GANTI PUNYA LU
-  const SUPABASE_KEY = 'eyJhbGciOi...' // GANTI PUNYA LU
+
+  const SUPABASE_URL = 'https://dwcgozbbqkcimzndfqaf.supabase.co' // GANTI
+  const SUPABASE_KEY = 'eyJhbGciOi...' // GANTI
   const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 
   let currentUser = null;
-  let currentMode = 'public'; 
-  let currentReceiver = null; 
-  let channel = null; 
+  let currentMode = 'public';
+  let currentReceiver = null;
+  let channel = null;
+
+  // AUTO BUKA DI HALAMAN 3 = CHAT
+  window.onload = () => {
+    document.getElementById('slider').scrollLeft = window.innerWidth * 2;
+  }
 
   const app = document.getElementById('app');
   const appTabs = document.getElementById('appTabs');
@@ -89,11 +156,11 @@
 
   window.loginPi = async () => {
     try {
-      Pi.init({ version: "2.0", sandbox: false }); // WAJIB INIT DULU
+      Pi.init({ version: "2.0", sandbox: false });
       const scopes = ['username'];
-      const auth = await Pi.authenticate(scopes); 
+      const auth = await Pi.authenticate(scopes);
       currentUser = { uid: auth.user.uid, username: auth.user.username };
-      
+
       document.getElementById('loginBtn').style.display = 'none';
       app.style.display = 'flex';
       appTabs.style.display = 'flex';
@@ -109,16 +176,16 @@
     currentReceiver = null;
     document.querySelectorAll('.tab-btns button').forEach(b => b.classList.remove('active'));
     document.getElementById(mode).classList.add('active');
-    box.innerHTML = 'Loading...'; 
-    if(channel) supabase.removeChannel(channel); 
+    box.innerHTML = 'Loading...';
+    if(channel) supabase.removeChannel(channel);
 
     if(mode === 'privasi') {
       userList.style.display = 'block';
-      await loadUsers(); 
+      await loadUsers();
     } else {
       userList.style.display = 'none';
-      loadMessages(); 
-      subscribeRealtime(); 
+      loadMessages();
+      subscribeRealtime();
     }
   }
 
@@ -148,9 +215,9 @@
     if (currentMode === 'privasi' && currentReceiver) {
       query = query.or(`and(sender_uid.eq.${currentUser.uid},receiver_uid.eq.${currentReceiver.uid}),and(sender_uid.eq.${currentReceiver.uid},receiver_uid.eq.${currentUser.uid})`);
     } else if(currentMode === 'privasi') { box.innerHTML = 'Pilih orang dulu'; return; }
-    
+
     const { data, error } = await query;
-    if(error) { box.innerHTML = 'Error load: ' + error.message; return; }
+    if(error) { box.innerHTML = 'Error load: ' + error.message + '. Cek URL/Key/RLS'; return; }
     box.innerHTML = '';
     data.forEach(renderMsg);
     box.scrollTop = box.scrollHeight;
@@ -159,14 +226,14 @@
   function subscribeRealtime() {
     const table = TABLE_MAP[currentMode];
     channel = supabase.channel('chat_' + currentMode)
-  .on('postgres_changes', { event: 'INSERT', schema: 'public', table: table }, payload => {
+.on('postgres_changes', { event: 'INSERT', schema: 'public', table: table }, payload => {
         const msg = payload.new;
         if(currentMode === 'privasi' && currentReceiver) {
            if(!(msg.sender_uid === currentUser.uid && msg.receiver_uid === currentReceiver.uid) &&!(msg.sender_uid === currentReceiver.uid && msg.receiver_uid === currentUser.uid)) return;
         }
         renderMsg(msg);
       })
-  .subscribe();
+.subscribe();
   }
 
   function renderMsg(msg) {
