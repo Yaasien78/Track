@@ -1,0 +1,16 @@
+<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Auth...</title><style>body{background:#1a1a1a;color:#fbbf24;font-family:sans-serif;display:flex;justify-content:center;align-items:center;height:100vh;margin:0}</style></head>
+<body>Logging in...</body>
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+const supabase = createClient('https://aecidmcsdtkshjdnrrrd.supabase.co', 'sb_publishable_Ha3M2Q6FzUGaTVV4rtnong_lkHZrQWD');
+
+const hash = window.location.hash;
+const returnTo = localStorage.getItem('pi_return_to') || 'index.html'; 
+
+if (hash.includes('access_token')) {
+  const piToken = new URLSearchParams(hash.substring(1)).get('access_token');
+  supabase.auth.signInWithIdToken({ provider: 'pi', token: piToken })
+  .then(() => { localStorage.removeItem('pi_return_to'); window.location.href = returnTo; })
+  .catch(e => { alert('Gagal: ' + e.message); window.location.href = returnTo; });
+} else { window.location.href = returnTo; }
+</script></html>
