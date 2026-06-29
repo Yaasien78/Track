@@ -60,7 +60,6 @@
 <script>
 
 <script>
-// UDAH GUA ISI URL + KEY LU
 const SUPABASE_URL = 'https://aecidmcsdtkshjdnrrrd.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_Ha3M2Q6FzUGaTVV4rtnong_lkHZrQWD';
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -76,9 +75,15 @@ const msgInput = document.getElementById('msgInput');
 const sendBtn = document.getElementById('sendBtn');
 const tabs = document.querySelectorAll('.tab');
 
-// INIT PI SDK
+// FIX 1: INIT SANDBOX DULU BIAR BISA TEST
 window.onload = () => {
-  Pi.init({ version: "2.0", sandbox: true }); 
+  if (typeof Pi === 'undefined') {
+    loginBtn.innerText = 'Buka di Pi Browser!';
+    loginBtn.disabled = true;
+    loginBox.style.background = '#7f1d1d'; // merah
+    return;
+  }
+  Pi.init({ version: "2.0", sandbox: true }); // GANTI TRUE DULU BUAT TESTING
   checkIfLoggedIn();
 };
 
@@ -92,25 +97,28 @@ async function checkIfLoggedIn() {
 }
 
 loginBtn.onclick = async () => {
-  if (typeof Pi === 'undefined') {
-    alert('Buka di Pi Browser ya bro. Chrome gabisa login Pi.');
-    return;
-  }
   try {
-    loginBtn.innerText = 'Loading...';
+    loginBtn.innerText = 'Loading Pi...';
     loginBtn.disabled = true;
-    const scopes = ['username', 'payments'];
+    
+    // FIX 2: TAMBAHIN ALERT DEBUG
+    alert('Coba buka Pi SDK...'); 
+    const scopes = ['username']; // payments dihapus dulu biar gak ribet
     const authResult = await Pi.authenticate(scopes, onIncompletePaymentFound);
+    
+    alert('Pi OK! Token: ' + authResult.accessToken.slice(0,10) + '...');
+
     const { data, error } = await supabase.auth.signInWithIdToken({
       provider: 'pi',
       token: authResult.accessToken,
     });
+
     if (error) throw error;
     currentUser = data.user;
     loginBox.innerHTML = `<div class="user-info"><img src="https://ui-avatars.com/api/?name=${currentUser.user_metadata.username}"><span>@${currentUser.user_metadata.username}</span> <button onclick="logout()" style="background:transparent;border:1px solid #fbbf24;color:#fbbf24;border-radius:6px;padding:4px 8px;">Logout</button></div>`;
     enableChat();
   } catch (e) {
-    alert('Login gagal: ' + e.message);
+    alert('Login gagal: ' + e.message); // INI YANG PENTING, LIAT ERROR NYA APA
     loginBtn.innerText = 'Login dengan Pi';
     loginBtn.disabled = false;
   }
@@ -143,10 +151,8 @@ async function sendMessage() {
   const text = msgInput.value.trim();
   if(!text || !currentUser) return;
   const { error } = await supabase.from('chat_messages').insert({
-    room: currentRoom,
-    team_id: currentRoom === 'team' ? 'team1' : null, // GANTI 'team1' pake team_id lu
-    uid: currentUser.id,
-    username: currentUser.user_metadata.username,
+    room: currentRoom, team_id: currentRoom === 'team' ? 'team1' : null,
+    uid: currentUser.id, username: currentUser.user_metadata.username,
     avatar_url: `https://ui-avatars.com/api/?name=${currentUser.user_metadata.username}`,
     message: text
   });
