@@ -47,17 +47,23 @@
   <div id="post" class="page">
     <button class="back-btn" onclick="showPage('feed')">← Back</button>
     <h2>✅ Post Berhasil!</h2>
-    <p>Makasih udah bayar 0.1 Test-Pi</p>
   </div>
 
 </div>
 
 <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 <script>
-  Pi.init({ version: "2.0", sandbox: true }); // TESTNET
-
   let currentUser = null;
-  const API_URL = 'https://api.mytrack.app'; // [GANTI] URL backend lu di repo app
+  const API_URL = 'https://api.mytrack.app'; // [GANTI] URL backend lu
+
+  // [KUNCI] PI SDK WAJIB TUNGGU SIAP DULU
+  function onPiSdkReady() {
+    Pi.init({ version: "2.0", sandbox: true }); // TESTNET
+
+    Pi.authenticate(['username', 'payments'], onIncompletePaymentFound)
+     .then(onReadyForServerAuth)
+     .catch(onError);
+  }
 
   function onReadyForServerAuth(authResult) {
     currentUser = authResult.user;
@@ -67,32 +73,11 @@
   function bayarPost() {
     if(!currentUser) return alert('Login Pi dulu bro');
 
-    const paymentData = {
-      amount: 0.1,
-      memo: "Post MyTrack Testnet",
-      metadata: { app: "MyTrack", user: currentUser.username }
-    };
+    const paymentData = { amount: 0.1, memo: "Post MyTrack Testnet", metadata: { app: "MyTrack", user: currentUser.username } };
 
     Pi.createPayment(paymentData, {
-      // [KUNCI] Kirim ke backend lu buat approve
-      onReadyForServerApproval: (paymentId) => {
-        fetch(API_URL + '/payments/approve', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ paymentId })
-        });
-      },
-      // [KUNCI] Kirim ke backend lu buat complete
-      onReadyForServerCompletion: (paymentId, txid) => {
-        fetch(API_URL + '/payments/complete', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ paymentId, txid })
-        }).then(res => {
-          if(res.ok) showPage('post'); // Sukses baru pindah halaman
-          else alert('Gagal verifikasi server');
-        });
-      },
+      onReadyForServerApproval: (paymentId) => { fetch(API_URL + '/payments/approve', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ paymentId }) }); },
+      onReadyForServerCompletion: (paymentId, txid) => { fetch(API_URL + '/payments/complete', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ paymentId, txid }) }).then(res => { if(res.ok) showPage('post'); else alert('Gagal verifikasi server'); }); },
       onCancel: (paymentId) => { alert('Batal bayar') },
       onError: (error, payment) => { alert('Error: ' + error) },
     });
@@ -101,27 +86,10 @@
   function onIncompletePaymentFound(payment) {}
   function onError(error, payment) { alert(error); }
 
-  Pi.authenticate(['username', 'payments'], onIncompletePaymentFound).then(onReadyForServerAuth).catch(onError);
-
-  const DUMMY_POSTS = {
-    1: {user: '@yaasien', desc: 'Logo My Track V2', post: 'https://placehold.co/400x400/0f0f1a/FFD700?text=LOGO'}
-  };
-
-  function showPage(pageId) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById(pageId).classList.add('active');
-    window.scrollTo(0,0);
-  }
-
-  function showPost(id) {
-    const p = DUMMY_POSTS[id];
-    document.getElementById('review-content').innerHTML = `
-      <h2>${p.user}</h2>
-      <p>${p.desc}</p>
-      <img src="${p.post}" style="width: 100%; border-radius: 12px;">
-    `;
-    showPage('review');
-  }
+  // SCRIPT HALAMAN
+  const DUMMY_POSTS = { 1: {user: '@yaasien', desc: 'Logo My Track V2', post: 'https://placehold.co/400x400/0f0f1a/FFD700?text=LOGO'} };
+  function showPage(pageId) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById(pageId).classList.add('active'); window.scrollTo(0,0); }
+  function showPost(id) { const p = DUMMY_POSTS[id]; document.getElementById('review-content').innerHTML = `<h2>${p.user}</h2><p>${p.desc}</p><img src="${p.post}" style="width: 100%; border-radius: 12px;">`; showPage('review'); }
 </script>
 
 </body>
