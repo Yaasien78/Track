@@ -68,21 +68,35 @@ function updateBtnLogin(){
     btnLogin.textContent = 'Login'; 
   }
 }
-
 window.onload = async function(){
-  // TUNGGU SDK PI SIAP DULU
-  await new Promise(r => setTimeout(r, 500)); 
-  if(typeof Pi!== 'undefined'){ Pi.init({ version: "2.0", sandbox: true }); }
+  // 1. TUNGGU SDK PI SIAP DULU. JANGAN PAKE setTimeout
+  Pi.onReady(async function() { 
+    console.log('Pi SDK Siap');
 
-  let u = localStorage.getItem('pi_user');
-  if(u){ userLogin = JSON.parse(u); }
-  updateBtnLogin(); 
-
-  await fetchKurs(); 
-  fetchData(); 
-  setInterval(fetchKurs, 60000); 
-  setInterval(fetchData, 10000);
-};
+    // 2. CEK UDAH LOGIN BELUM
+    let u = localStorage.getItem('pi_user');
+    if(u){ 
+      userLogin = JSON.parse(u); 
+      updateBtnLogin();
+      return; // Udah login, stop disini. Gak usah auth lagi
+    }
+    
+    // 3. KALO BELUM LOGIN = AUTO AUTH
+    try {
+      const auth = await Pi.authenticate(['username', 'payments', 'wallet_address'], ()=>{});
+      userLogin = {username: auth.user.username};
+      localStorage.setItem('pi_user', JSON.stringify(userLogin));
+      updateBtnLogin();
+    } catch(e){
+      console.error('Auto Login Gagal:', e);
+    }
+    
+    await fetchKurs();
+    fetchData();
+    setInterval(fetchKurs, 60000);
+    setInterval(fetchData, 10000);
+  });
+  }
 
 btnLogin.onclick = async function(){
   if(typeof Pi === 'undefined'){ alert('Wajib buka di Pi Browser ya bang. Chrome gak bisa login.'); return; }
@@ -169,24 +183,5 @@ function initChart(labels, data){
     }
   });
 }
-</script>
-  <script src="https://sdk.minepi.com/pi-sdk.js"></script>
-<script>
-  Pi.init({ version: "2.0", sandbox: true }) // <-- KUNCINYA DI SINI: true = Testnet
-
-  async function auth() {
-    const scopes = ['username', 'payments']; 
-    const authResult = await Pi.authenticate(scopes, onIncompletePaymentFound);
-    console.log(authResult); 
-    // Simpen data login buat dipake di menu.html
-localStorage.setItem('pi_username', authResult.user.username);
-localStorage.setItem('pi_uid', authResult.user.uid);
-localStorage.setItem('pi_accessToken', authResult.accessToken); // INI PALING PENTING
-
-alert("Login Testnet Berhasil: " + authResult.user.username);
-window.location.href = 'menu.html'; // Langsung lempar ke halaman 2
-  }
-</script>
-<button onclick="auth()">Sign in with Pi TESTNET</button>
 </body>
 </html>
