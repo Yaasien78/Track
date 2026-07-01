@@ -178,7 +178,13 @@ function initChart(labels, data){
     const scopes = ['username', 'payments']; 
     const authResult = await Pi.authenticate(scopes, onIncompletePaymentFound);
     console.log(authResult); 
-    alert("Login Testnet Berhasil: " + authResult.user.username)
+    // Simpen data login buat dipake di menu.html
+localStorage.setItem('pi_username', authResult.user.username);
+localStorage.setItem('pi_uid', authResult.user.uid);
+localStorage.setItem('pi_accessToken', authResult.accessToken); // INI PALING PENTING
+
+alert("Login Testnet Berhasil: " + authResult.user.username);
+window.location.href = 'menu.html'; // Langsung lempar ke halaman 2
   }
 </script>
 <button onclick="auth()">Sign in with Pi TESTNET</button>
