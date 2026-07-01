@@ -6,46 +6,46 @@
   <title>My Track</title>
   <script src="https://sdk.minepi.com/pi-sdk.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style> 
     body { background-color: #2e1a4d; overflow: hidden; } 
-    .border-gold-2-tb { border-top: 2px solid #fbbf24; border-bottom: 2px solid #fbbf24; } /* Garis 2px Atas Bawah doang */
+    .border-gold-2-tb { border-top: 2px solid #fbbf24; border-bottom: 2px solid #fbbf24; } 
     .border-gold-2 { border: 2px solid #fbbf24; } 
-    .bg-dongker { background-color: #0f1a2e; } /* Biru Dongker Head/Foot */
-    .bg-putih-biru-10 { background-color: rgba(173, 216, 230, 0.1); } /* Kotak Chart */
+    .bg-dongker { background-color: #0f1a2e; } 
+    .bg-putih-biru-10 { background-color: rgba(173, 216, 230, 0.1); } 
+    @keyframes glow { 0%, 100% { box-shadow: 0 0 5px #fbbf24; } 50% { box-shadow: 0 0 15px #fbbf24; } }
+    .animate-glow { animation: glow 2s infinite; }
   </style>
 </head>
 <body class="text-white flex justify-center items-center h-screen font-sans">
 
   <div class="w-full max-w-sm h-screen flex-col bg-[#2e1a4d]">
 
-    <!-- HEAD BIRU DONGKER GARIS 2PX ATAS BAWAH OPSI 2 -->
     <header class="bg-dongker p-3 border-gold-2-tb flex items-center justify-between flex-shrink-0">
-      <!-- TOMBOL MENU GARIS 3 -->
       <a href="ads.html" class="text-3xl text-yellow-400">≡</a> 
-      
-      <!-- MY TRACK PUTIH DOANG DI ATAS BIRU DONGKER -->
       <h1 class="text-2xl font-extrabold text-white tracking-wide">My Track</h1> 
-
-      <!-- LOGO PI KAN ATAS -->
       <img src="https://minepi.com/favicon.ico" alt="Pi" class="w-8 h-8 rounded-full border-2 border-yellow-400">
     </header>
 
     <main class="p-3 flex-1 flex-col gap-3">
       <!-- CARD HARGA -->
-      <div class="bg-purple-800 border-gold-2 rounded-2xl p-3 text-center">
+      <div class="bg-purple-800 border-gold-2 rounded-2xl p-3 text-center animate-glow">
         <h2 class="text-lg text-white">Harga Pi/USD Live</h2>
-        <p id="hargaUSD" class="text-5xl font-extrabold text-yellow-400 my-1">$0.1150</p>
-        <p id="hargaIDR" class="text-xl text-yellow-400">Harga /pi = Rp 2.063</p>
-        <p id="persen" class="text-2xl text-green-400 font-bold">0.94%</p>
+        <p id="hargaUSD" class="text-5xl font-extrabold text-white my-1">$0.1150</p>
+        <p id="hargaIDR" class="text-xl text-white">Harga /pi = Rp 2.063</p>
+        <!-- % WARNA DINAMIS DISINI -->
+        <p id="persen" class="text-2xl font-bold">0.94%</p> 
         <p class="text-xs text-purple-300 mt-1">Kurs: 1 USD = Rp 17934.50 | Update <span id="jam"></span></p>
       </div>
 
-      <!-- KOTAK CHART PUTIH KEBIRUAN 10% -->
-      <div class="bg-putih-biru-10 border-gold-2 rounded-2xl flex-1"></div>
+      <!-- CHART AKTIF -->
+      <div class="bg-putih-biru-10 border-gold-2 rounded-2xl p-2 flex-1 min-h-0">
+        <canvas id="priceChart"></canvas>
+      </div>
     </main>
 
-    <!-- FOOT BIRU DONGKER GARIS 2PX + WELCOME USERNAME -->
-    <footer class="bg-dongker p-2 border-gold-2-tb text-center flex-shrink-0">
+    <!-- FOOT NEMPEL BAWAH -->
+    <footer class="bg-dongker p-2 border-gold-2-tb text-center flex-shrink-0 mt-auto">
       <p class="text-xl font-bold text-yellow-400">Welcome <span id="namaUser">Yaasien</span></p>
     </footer>
 
@@ -57,6 +57,43 @@
       document.getElementById('namaUser').innerText = auth.user.username;
     }).catch(() => {
       document.getElementById('namaUser').innerText = 'Yaasien';
+    });
+
+    // DATA HARGA CONTOH
+    let hargaSekarang = 0.1150;
+    let hargaKemarin = 0.1139; // Ganti ini buat test merah/hijau
+    let persen = ((hargaSekarang - hargaKemarin) / hargaKemarin * 100).toFixed(2);
+    
+    const persenEl = document.getElementById('persen');
+    persenEl.innerText = `${persen}%`;
+    
+    // LOGIKA WARNA: HIJAU KALO + MERAH KALO -
+    if (persen >= 0) {
+      persenEl.classList.add('text-green-400'); // HIJAU NAIK
+      persenEl.innerText = `+${persen}%`; // Kasih tanda +
+    } else {
+      persenEl.classList.add('text-red-500'); // MERAH TURUN
+    }
+
+    // CHART AKTIF
+    const ctx = document.getElementById('priceChart');
+    new Chart(ctx, {
+      type: 'line',
+      data: { labels: ['','','',''],
+        datasets: [{ 
+          data: [0.1140, 0.1148, 0.1155, 0.1150, 0.1160, 0.1150],
+          borderColor: '#fbbf24', 
+          borderWidth: 2, 
+          backgroundColor: 'rgba(251, 191, 36, 0.1)',
+          fill: true, 
+          tension: 0.4, 
+          pointRadius: 0 
+      }]},
+      options: { 
+        maintainAspectRatio: false,
+        scales: { y: { display: false }, x: { display: false } }, 
+        plugins: { legend: { display: false } }
+      }
     });
 
     document.getElementById('jam').innerText = new Date().toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
