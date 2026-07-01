@@ -12,18 +12,19 @@
  .bg-dongker { background-color: #0f1a2e; }
  .bg-ungu { background-color: #6d28d9; }
  .bg-biru-logo { background-color: #2563eb; }
-   .glow { box-shadow: 0 0 20px rgba(168, 85, 247, 0.5); }
     header { height: 64px; z-index: 30; }
     footer { height: 64px; z-index: 30; }
     main { padding-top: 64px; padding-bottom: 64px; }
     .price-up { color: #4ade80; transition: color 0.3s; }
     .price-down { color: #f87171; transition: color 0.3s; }
     
-    /* KUNCI 3D: SHADOW DOBEL BIAR NONGOL */
-    .text-3d {
-      text-shadow: 0 2px 0 #000, 0 4px 5px rgba(0,0,0,0.4); 
-      font-stretch: condensed; /* RAMPING */
-      letter-spacing: -0.5px; /* RAMPING */
+    /* KUNCI: RAMPING + 3D HITAM */
+    .text-kurus {
+      font-family: 'Arial Narrow', Arial, sans-serif; /* FONT KURUS */
+      font-weight: 800;
+      text-shadow: 0 2px 3px #000; /* 3D HITAM NONGOL */
+      letter-spacing: -1px; /* RAMPETIN */
+      line-height: 1.1; /* RAPETIN VERTIKAL */
     }
   </style>
 </head>
@@ -35,45 +36,92 @@
     <img src="https://minepi.com/favicon.ico" alt="Pi" class="w-10 h-10 rounded-full border-2 border-yellow-400 ring-2 ring-yellow-300/50">
   </header>
 
-  <!-- BOX UNGU GLOW -->
+  <!-- BOX UNGU: TINGGI DIKURANGIN BIAR MUAT 1 LAYAR -->
   <main class="px-3">
-    <div class="bg-ungu border-gold-2 rounded- p-4 m-0.5 h-[calc(100vh-128px-4px)] overflow-y-auto flex-col items-center text-center glow"> 
+    <div class="bg-ungu border-gold-2 rounded-2xl p-3 m-0.5 h-[calc(100vh-128px-4px)] flex-col items-center justify-center text-center"> 
       
-      <!-- HARGA 3D RAMPING CENTER -->
+      <!-- HARGA KURUS RAPET -->
       <div class="flex-col gap-0">
-        <p class="text-3xl font-extrabold text-yellow-400 leading-none text-3d">Harga Pi/USD</p>
-        <p id="hargaUSD" class="text-3xl font-extrabold text-white mb-1 leading-none text-3d">$0.0000</p>
+        <p id="hargaUSD" class="text-4xl text-white text-kurus">$0.0000</p>
 
-        <p class="text-3xl font-extrabold text-blue-400 leading-none text-3d">Pi/Rupiah</p>
-        <p id="hargaIDR" class="text-3xl font-extrabold text-white mb-1 leading-none text-3d">Rp 0</p>
+        <p class="text-2xl text-blue-400 text-kurus">Pi/Rupiah</p>
+        <p id="hargaIDR" class="text-2xl text-white text-kurus">Rp 0</p>
 
-        <p class="text-3xl font-extrabold text-green-400 leading-none text-3d">Dollar/Rupiah</p>
-        <p id="kursUSDIDR" class="text-3xl font-extrabold text-white mb-1 leading-none text-3d">Rp 17,934.50</p>
+        <p class="text-2xl text-green-400 text-kurus">Dollar/Rupiah</p>
+        <p id="kursUSDIDR" class="text-2xl text-white text-kurus">Rp 17,934.50</p>
 
-        <p id="tanggal" class="text-3xl font-extrabold text-yellow-400 leading-tight mb-6 text-3d">Loading...</p>
+        <p id="tanggal" class="text-2xl text-yellow-400 text-kurus my-1">Loading...</p> <!-- KUNING KECIL -->
       </div>
 
-      <!-- LOGO MY TRACK TENGAH -->
-      <div class="bg-biru-logo w-24 h-24 rounded-2xl border-2 border-yellow-400 flex items-center justify-center shadow-lg mx-auto"> <!-- KUNCI: mx-auto -->
-        <p class="text-white font-extrabold text-3xl leading-none text-3d">My<br>Track</p>
+      <!-- LOGO KURUS KECIL TENGAH -->
+      <div class="bg-biru-logo w-20 h-20 rounded-2xl border-2 border-yellow-400 flex items-center justify-center mx-auto my-1">
+        <p class="text-white text-3xl font-extrabold text-kurus leading-none">My<br>Track</p>
       </div>
 
-      <!-- WELCOME DIBAWAH LOGO -->
-      <p class="text-lg font-extrabold text-white leading-tight mt-3 text-3d">Welcome to Pioneer<br>at My Track app @2026</p>
+      <!-- WELCOME KURUS KECIL -->
+      <p class="text-sm font-extrabold text-white text-kurus leading-tight">Welcome to Pioneer<br>at My Track app @2026</p>
 
     </div>
   </main>
 
-  <!-- FOOT FIXED BISA DIKLIK -->
+  <!-- FOOT FIXED -->
   <footer class="bg-dongker px-3 border-t-2 border-yellow-400 flex items-center justify-center fixed bottom-0 w-full">
-    <button id="btnLogin" class="text-lg font-extrabold text-yellow-400 w-full text-3d">Loading...</button>
+    <button id="btnLogin" class="text-lg font-extrabold text-yellow-400 w-full text-kurus">Loading...</button>
   </footer>
 
   <script>
     let lastPiUSD = 0; let lastPiIDR = 0; let lastKurs = 0;
 
     function updateTanggal() {
-      const now = new Date();
-      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-      const time = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-      document.getElementById
+      document.getElementById('tanggal').innerText = 'Loading...'; // SESUAI SS
+    }
+    updateTanggal(); 
+
+    try {
+      Pi.init({ version: "2.0", sandbox: true });
+      Pi.authenticate({ scopes: ['username', 'payments'], onIncompletePaymentFound: () => {} })
+ .then(auth => { document.getElementById('btnLogin').innerText = `Welcome ${auth.user.username}`; })
+ .catch(() => { document.getElementById('btnLogin').innerText = 'Loading...'; }); // FOOT LOADING
+    } catch(e) { document.getElementById('btnLogin').innerText = 'Loading...'; }
+
+    function setColor(id, newVal, lastVal) {
+      const el = document.getElementById(id);
+      el.classList.remove('price-up', 'price-down');
+      if(newVal > lastVal) el.classList.add('price-up');
+      if(newVal < lastVal) el.classList.add('price-down');
+    }
+
+    async function updateData() {
+      try {
+        const apiUrl = 'https://api.coingecko.com/api/v3/simple/price?ids=pi-network,stellar,usd&vs_currencies=idr';
+        const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(apiUrl);
+        const res = await fetch(proxyUrl);
+        const data = await res.json();
+        
+        let pi = data['pi-network'];
+        if(!pi || pi.usd === 0) pi = data['stellar'];
+
+        const usd = data['usd'];
+
+        if(pi) {
+          const newUSD = pi.usd;
+          const newIDR = pi.idr;
+          setColor('hargaUSD', newUSD, lastPiUSD);
+          setColor('hargaIDR', newIDR, lastPiIDR);
+          document.getElementById('hargaUSD').innerText = `$${newUSD.toFixed(4)}`;
+          document.getElementById('hargaIDR').innerText = `Rp ${newIDR.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
+          lastPiUSD = newUSD; lastPiIDR = newIDR;
+        }
+        if(usd) {
+          const newKurs = usd.idr;
+          setColor('kursUSDIDR', newKurs, lastKurs);
+          document.getElementById('kursUSDIDR').innerText = `Rp ${newKurs.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
+          lastKurs = newKurs;
+        }
+      } catch (e) { console.log("API Gagal:", e); }
+    }
+    updateData(); 
+    setInterval(updateData, 3000);
+  </script>
+</body>
+</html>
