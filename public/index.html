@@ -8,99 +8,107 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style> 
-    body { background-color: #ffffff; overflow: hidden; } /* LATAR PUTIH */
+    body { background-color: #ffffff; overflow: hidden; } /* BODY PUTIH */
     .border-gold-2-tb { border-top: 2px solid #fbbf24; border-bottom: 2px solid #fbbf24; } 
     .border-gold-2 { border: 2px solid #fbbf24; } 
     .bg-dongker { background-color: #0f1a2e; } 
-    .bg-ungu { background-color: #6d28d9; } /* Ungu Card SS */
-    
-    /* CHART HIDUP + GLOW */
+    .bg-ungu { background-color: #6d28d9; } 
     @keyframes glow { 0%, 100% { box-shadow: 0 0 5px #fbbf24; } 50% { box-shadow: 0 0 15px #fbbf24; } }
     .animate-glow { animation: glow 2s infinite; }
   </style>
 </head>
 <body class="text-white flex justify-center items-center h-screen font-sans">
 
-  <div class="w-full max-w-sm h-screen flex-col bg-white"> <!-- WRAPPER PUTIH -->
+  <!-- WRAPPER UNGU FULL NUTUPIN BODY PUTIH -->
+  <div class="w-full h-screen flex-col bg-ungu"> <!-- GAK PAKE MAX-W-SM BIAR FULL -->
 
     <!-- HEAD BIRU DONGKER -->
     <header class="bg-dongker p-3 border-gold-2-tb flex items-center justify-between flex-shrink-0">
       <a href="ads.html" class="text-3xl text-yellow-400">≡</a> 
-      <h1 class="text-2xl font-extrabold text-white tracking-wide">My Track</h1> 
+      <h1 class="text-2xl font-extrabold text-yellow-400 tracking-wide drop-shadow-lg">My Track</h1>
       <img src="https://minepi.com/favicon.ico" alt="Pi" class="w-8 h-8 rounded-full border-2 border-yellow-400">
     </header>
 
-    <main class="p-3 flex-1 flex-col gap-3 bg-[#2e1a4d]"> <!-- KONTEN TETEP UNGU DONGKER -->
-      
-      <!-- CARD HARGA UNGU SS -->
+    <main class="p-3 flex-1 flex-col gap-3">
+      <!-- CARD HARGA -->
       <div class="bg-ungu border-gold-2 rounded-2xl p-3 text-center animate-glow">
         <h2 class="text-lg text-white">Harga Pi/USD Live</h2>
-        <p id="hargaUSD" class="text-5xl font-extrabold text-white my-1">$0.1150</p>
-        <p id="hargaIDR" class="text-xl text-white">Harga /pi = Rp 2.063</p>
-        <p id="persen" class="text-2xl font-bold">0.97%</p> 
+        <p id="hargaUSD" class="text-5xl font-extrabold text-yellow-400 my-1">$0.1150</p>
+        <p id="hargaIDR" class="text-xl text-yellow-400">Harga /pi = Rp 2.063</p>
+        <p id="persen" class="text-2xl font-bold text-green-400">0.94%</p>
         <p class="text-xs text-purple-200 mt-1">Kurs: 1 USD = Rp 17934.50 | Update <span id="jam"></span></p>
       </div>
 
-      <!-- CHART LEBIH HIDUP GARIS EMAS TEBEL + GLOW -->
+      <!-- CHART -->
       <div class="bg-ungu border-gold-2 rounded-2xl p-2 flex-1 min-h-0 animate-glow">
         <canvas id="priceChart"></canvas>
       </div>
     </main>
 
-    <!-- FOOT AUTO LOGIN PI BENERAN -->
-    <footer class="bg-dongker p-2 border-gold-2-tb text-center flex-shrink-0 mt-auto">
-      <p class="text-xl font-bold text-yellow-400">Welcome <span id="namaUser">Loading...</span></p> <!-- GAK DUMMY -->
+    <!-- FOOT BISA KLIK -->
+    <footer class="bg-dongker p-0 border-gold-2-tb text-center flex-shrink-0 mt-auto">
+      <button id="btnLogin" class="w-full p-2 text-xl font-bold text-yellow-400 active:bg-yellow-600 rounded-b-2xl">
+        Loading...
+      </button> 
     </footer>
 
   </div>
 
   <script>
-    // AUTO LOGIN PI BENERAN - GAK DUMMY LAGI
+    let isLoggedIn = false;
+    const btnLogin = document.getElementById('btnLogin');
+
     Pi.init({ version: "2.0", sandbox: false });
-    Pi.authenticate(['username', 'payments']).then(auth => {
-      document.getElementById('namaUser').innerText = auth.user.username; // AMBIL USERNAME ASLI
-    }).catch((err) => {
-      document.getElementById('namaUser').innerText = 'Guest'; // KALO GAGAL DI BROWSER BIASA
-      console.error(err);
+    Pi.authenticate(['username']).then(auth => {
+      isLoggedIn = true;
+      btnLogin.innerText = `Welcome ${auth.user.username}`;
+      btnLogin.classList.remove('bg-yellow-500', 'text-black');
+    }).catch(() => {
+      isLoggedIn = false;
+      btnLogin.innerText = 'Login Pi';
+      btnLogin.classList.add('bg-yellow-500', 'text-black', 'rounded-lg', 'm-2');
     });
+
+    btnLogin.onclick = () => {
+      if (isLoggedIn) {
+        alert('Peringatan: Anda sudah login otomatis di Pi Browser ✅');
+      } else {
+        alert('Silahkan buka aplikasi ini dari Pi Browser untuk Login Otomatis ⚠️');
+      }
+    }
 
     // DATA HARGA + % WARNA
     let hargaSekarang = 0.1150;
     let hargaKemarin = 0.1139; 
     let persen = ((hargaSekarang - hargaKemarin) / hargaKemarin * 100).toFixed(2);
-    
     const persenEl = document.getElementById('persen');
-    if (persen >= 0) {
-      persenEl.classList.add('text-green-400');
-      persenEl.innerText = `+${persen}%`;
-    } else {
-      persenEl.classList.add('text-red-500');
-    }
+    if (persen >= 0) { persenEl.innerText = `+${persen}%`; } 
+    else { persenEl.classList.remove('text-green-400'); persenEl.classList.add('text-red-500'); }
 
-    // CHART LEBIH HIDUP: GARIS 3PX + ANIMASI + GRADIEN
+    // CHART SKALA KIRI
     const ctx = document.getElementById('priceChart');
     const gradient = ctx.getContext('2d').createLinearGradient(0, 0, 0, 200);
-    gradient.addColorStop(0, 'rgba(251, 191, 36, 0.4)');
+    gradient.addColorStop(0, 'rgba(251, 191, 36, 0.3)');
     gradient.addColorStop(1, 'rgba(251, 191, 36, 0.0)');
 
     new Chart(ctx, {
       type: 'line',
       data: { labels: ['','','',''],
         datasets: [{ 
-          label: 'Pi',
-          data: [0.1140, 0.1145, 0.1155, 0.1152, 0.1160, 0.1150], // Data naik turun
+          data: [0.1220, 0.1215, 0.1210, 0.1205, 0.1190, 0.1180, 0.1170, 0.1175, 0.1185],
           borderColor: '#fbbf24', 
-          borderWidth: 3, // TEBEL 3PX BIAR HIDUP
-          backgroundColor: gradient, // GRADIEN EMAS
+          borderWidth: 2, 
+          backgroundColor: gradient,
           fill: true, 
-          tension: 0.4, 
-          pointRadius: 0,
-          pointHoverRadius: 5 // Ada titik pas disentuh
+          tension: 0.2,
+          pointRadius: 0
       }]},
       options: { 
         maintainAspectRatio: false,
-        animation: { duration: 2000, easing: 'easeInOutQuart' }, // ANIMASI MUNCUL
-        scales: { y: { display: false }, x: { display: false } }, 
+        scales: { 
+          y: { display: true, ticks: { color: 'white', callback: (val) => val.toFixed(4).replace('.', ',') }, grid: { color: 'rgba(255,255,255,0.1)' } }, 
+          x: { display: false } 
+        }, 
         plugins: { legend: { display: false } }
       }
     });
