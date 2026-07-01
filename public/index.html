@@ -18,7 +18,7 @@
     .price-up { color: #4ade80 !important; transition: color 0.3s; }
     .price-down { color: #f87171 !important; transition: color 0.3s; }
     
-    /* KUNCI: RAMPING + 3D HITAM + UKURAN SAMA */
+    /* RAMPING + 3D HITAM */
     .text-kurus {
       font-family: 'Arial Narrow', Arial, sans-serif;
       font-weight: 800;
@@ -36,13 +36,14 @@
     <img src="https://minepi.com/favicon.ico" alt="Pi" class="w-10 h-10 rounded-full border-2 border-yellow-400 ring-2 ring-yellow-300/50">
   </header>
 
-  <!-- BOX UNGU: ROUNDED 2XL SESUAI SS -->
+  <!-- BOX UNGU -->
   <main class="px-3">
-    <div class="bg-ungu border-gold-2 rounded-2xl p-3 m-0.5 h-[calc(100vh-128px-4px)] flex-col items-center justify-center text-center"> 
+    <div class="bg-ungu border-gold-2 rounded-2xl p-3 m-0.5 h-[calc(100vh-128px-4px)] flex-col items-center justify-start text-center"> 
       
-      <!-- HARGA KURUS RAPET UKURAN SAMA -->
+      <!-- HARGA KURUS RAPET -->
       <div class="flex-col gap-0">
-        <!-- 1. PI/USDT DI ATAS -->
+        <!-- 1. KALIMAT HARGA PI/USDT DI ATAS -->
+        <p class="text-2xl text-white text-kurus">Harga Pi/USDT</p>
         <p id="hargaUSDT" class="text-3xl text-white text-kurus">$0.0000</p>
 
         <!-- 2. PI/RUPIAH -->
@@ -56,13 +57,14 @@
         <p id="tanggal" class="text-2xl text-yellow-400 text-kurus my-1">Loading...</p>
       </div>
 
-      <!-- LOGO TENGAH -->
-      <div class="bg-biru-logo w-20 h-20 rounded-2xl border-2 border-yellow-400 flex items-center justify-center mx-auto my-1">
-        <p class="text-white text-3xl font-extrabold text-kurus leading-none">My<br>Track</p>
-      </div>
+      <!-- LOGO + WELCOME DITURUNIN BANGET: mt-8 -->
+      <div class="mt-8">
+        <div class="bg-biru-logo w-20 h-20 rounded-2xl border-2 border-yellow-400 flex items-center justify-center mx-auto">
+          <p class="text-white text-3xl font-extrabold text-kurus leading-none">My<br>Track</p>
+        </div>
 
-      <!-- WELCOME DITURUNIN LAGI: mt-6 -->
-      <p class="text-sm font-extrabold text-white text-kurus leading-tight mt-6">Welcome to Pioneer<br>at My Track app @2026</p>
+        <p class="text-sm font-extrabold text-white text-kurus leading-tight mt-2">Welcome to Pioneer<br>at My Track app @2026</p>
+      </div>
 
     </div>
   </main>
@@ -96,7 +98,7 @@
 
     async function updateData() {
       try {
-        // AKTIFKAN LAGI: AMBIL PI + USD REALTIME
+        // AKTIFKAN SEMUA: PAKE API COINGECKO LANGSUNG
         const apiUrl = 'https://api.coingecko.com/api/v3/simple/price?ids=pi-network,usd&vs_currencies=usd,idr';
         const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(apiUrl);
         const res = await fetch(proxyUrl);
@@ -105,8 +107,8 @@
         const pi = data['pi-network'];
         const usd = data['usd'];
 
-        if(pi) {
-          const newUSDT = pi.usd; // PI/USDT = PI/USD
+        if(pi && pi.usd > 0) { // CUMA UPDATE KALAU ADA DATA
+          const newUSDT = pi.usd;
           const newIDR = pi.idr;
           setColor('hargaUSDT', newUSDT, lastPiUSDT);
           setColor('hargaIDR', newIDR, lastPiIDR);
@@ -122,11 +124,10 @@
         }
       } catch (e) { 
         console.log("API Gagal:", e);
-        document.getElementById('hargaUSDT').innerText = '$0.0000'; // BALIK KE 0 KALAU GAGAL
       }
     }
     updateData(); 
     setInterval(updateData, 3000); // REALTIME 3 DETIK
   </script>
 </body>
-</html>
+  </html>
