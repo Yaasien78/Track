@@ -28,17 +28,15 @@
     .items-center { align-items: center; }
     .justify-between { justify-content: space-between; }
     .justify-center { justify-content: center; }
-    .justify-end { justify-content: flex-end; }
     .flex-col { flex-direction: column; }
     .mx-auto { margin-left: auto; margin-right: auto; }
     .mt-1 { margin-top: 4px; }
-    .mb-0 { margin-bottom: 0; }
-    .mt-0\.5 { margin-top: 2px; }
+    .mb-1 { margin-bottom: 4px; }
     .p-2 { padding: 8px; }
     .px-2 { padding-left: 8px; padding-right: 8px; }
     .px-3 { padding-left: 12px; padding-right: 12px; }
     .pt-2 { padding-top: 8px; }
-    .pb-0 { padding-bottom: 0; }
+    .pb-1 { padding-bottom: 4px; }
     .m-1 { margin: 4px; }
     .w-full { width: 100%; }
     .w-10 { width: 40px; }
@@ -67,8 +65,9 @@
   </header>
 
   <main class="px-2">
+    <!-- PB-1 MB-1 = MEPET BANGET KE FOOT -->
     <div class="bg-ungu border-kuning rounded-3xl p-2 m-1" style="height: calc(100vh - 112px - 8px); display: flex; flex-direction: column; justify-content: flex-end;"> 
-      <div class="text-center mb-0">
+      <div class="text-center mb-1 pb-1">
         <p class="text-lg text-ss text-white">Harga Pi/USDT</p>
         <p id="hargaUSDT" class="text-lg text-ss text-white">$0.1151</p>
         <p class="text-lg text-ss text-sky">Pi/Rupiah</p>
@@ -76,7 +75,7 @@
         <p class="text-lg text-ss text-green">Dollar/Rupiah</p>
         <p id="kursUSDIDR" class="text-lg text-ss text-white">Rp 16.848,58</p>
         <p id="tanggal" class="text-lg text-ss text-yellow">Kamis, 2 Juli 2026</p>
-        <div class="bg-dongker w-12 h-12 rounded-lg border-kuning ring-2 mx-auto mt-1" style="background:#3b82f6;">
+        <div class="w-12 h-12 rounded-lg border-kuning ring-2 mx-auto mt-1" style="background:#3b82f6; display:flex; align-items:center; justify-content:center;">
           <p class="text-base text-ss text-white" style="line-height:1;">My<br>Track</p>
         </div>
         <p class="text-base text-ss text-white mt-0.5 mb-0">Welcome to Pioneer<br>at My Track app @2026</p>
@@ -90,20 +89,25 @@
 
   <script>
     let currentUser = null;
-    Pi.init({ version: "2.0", sandbox: true }); 
     const btn = document.getElementById('btnBayar');
 
     document.getElementById('tanggal').innerText = new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Jakarta' });
 
+    // FIX: TUNGGU SDK BENERAN LOAD DULU
+    window.onload = function() {
+      Pi.init({ version: "2.0", sandbox: true }); 
+    };
+
     async function loginPi() {
       try {
         btn.innerText = 'Login...';
-        const auth = await Pi.authenticate({ scopes: ['username'], onIncompletePaymentFound: () => {} });
+        // CUMA 'username' DULU BIAR GAK ERROR
+        const auth = await Pi.authenticate({ scopes: ['username'] }); 
         currentUser = auth.user;
         btn.innerText = `Halo ${currentUser.username}`;
       } catch (err) {
         btn.innerText = 'Login Pi';
-        alert('Login Gagal: ' + err.message); 
+        alert('Login Gagal: ' + err); 
       }
     }
     btn.onclick = loginPi;
@@ -125,4 +129,4 @@
     setInterval(updateData, 3000);
   </script>
 </body>
-    </html>
+</html>
