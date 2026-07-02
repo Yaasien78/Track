@@ -14,14 +14,16 @@
     .border-kuning-b { border-bottom: 2px solid #facc15; }
     .border-kuning-t { border-top: 2px solid #facc15; }
     .border-kuning { border: 2px solid #facc15; }
-    .border-putih { border: 2px solid #ffffff; } /* GARIS LINGKARAN PUTIH */
+    .border-putih { border: 2px solid #ffffff; }
     .text-ss { font-family: Impact, 'Arial Black', sans-serif; font-weight: 900; text-shadow: 0 3px 6px rgba(0,0,0,0.9); line-height: 1.1; }
     .text-white { color: #fff; }
     .text-yellow { color: #facc15; }
     .text-sky { color: #7dd3fc; }
     .text-green { color: #86efac; }
     .text-2xl { font-size: 24px; }
+    .text-xl { font-size: 20px; } /* PERBESAR ISI BOX */
     .text-lg { font-size: 18px; }
+    .text-base { font-size: 14px; } /* BUAT WELCOME */
     .font-black { font-weight: 900; }
     .text-center { text-align: center; }
     .flex { display: flex; }
@@ -32,6 +34,7 @@
     .mx-auto { margin-left: auto; margin-right: auto; }
     .mt-auto { margin-top: auto; }
     .mb-0 { margin-bottom: 0; }
+    .mt-0\.5 { margin-top: 2px; }
     .p-2 { padding: 8px; }
     .px-2 { padding-left: 8px; padding-right: 8px; }
     .px-3 { padding-left: 12px; padding-right: 12px; }
@@ -43,6 +46,8 @@
     .h-12 { height: 48px; }
     .w-10 { width: 40px; }
     .h-10 { height: 40px; }
+    .w-6 { width: 24px; }
+    .h-0\.5 { height: 2px; }
     .rounded-full { border-radius: 9999px; }
     .rounded-3xl { border-radius: 24px; }
     .rounded-lg { border-radius: 8px; }
@@ -50,6 +55,7 @@
     .fixed { position: fixed; }
     .top-0 { top: 0; }
     .bottom-0 { bottom: 0; }
+    .space-y-1 > * + * { margin-top: 4px; } /* JARAK 3 GARIS MENU */
     header, footer { height: 56px; }
     main { padding-top: 56px; padding-bottom: 56px; }
     button { background: none; border: none; }
@@ -57,9 +63,13 @@
 </head>
 <body>
   <header class="bg-dongker px-2 border-kuning-b flex items-center justify-between fixed top-0 w-full">
-    <a href="menu.html" class="text-2xl text-yellow">≡</a>
+    <!-- KOTAK MENU 3 GARIS AJA -->
+    <a href="menu.html" class="flex flex-col justify-center space-y-1 w-6 h-6">
+      <span class="w-full h-0.5 bg-yellow"></span>
+      <span class="w-full h-0.5 bg-yellow"></span>
+      <span class="w-full h-0.5 bg-yellow"></span>
+    </a>
     <h1 class="text-2xl font-black text-white text-ss">My Track</h1>
-    <!-- LOGO π: GARIS LINGKARAN PUTIH, BG KOSONG/DONGKER, HURUF PUTIH -->
     <div class="w-10 h-10 rounded-full border-putih flex items-center justify-center">
       <span class="text-white text-2xl font-black">π</span>
     </div>
@@ -68,20 +78,23 @@
   <main class="px-2">
     <div class="bg-ungu border-kuning rounded-3xl px-2 pt-2 pb-2 m-1" style="height: calc(100vh - 112px - 8px); display: flex; flex-direction: column; justify-content: space-between;"> 
         
+        <!-- ISI BOX ATAS LOGO = text-xl = DIPERBESAR -->
         <div class="text-center">
-          <p class="text-lg text-ss text-white">Harga Pi/USDT</p>
-          <p id="hargaUSDT" class="text-lg text-ss text-white">$0.1154</p>
-          <p class="text-lg text-ss text-sky">Pi/Rupiah</p>
-          <p id="hargaIDR" class="text-lg text-ss text-white">Rp 2.076,48</p>
-          <p class="text-lg text-ss text-green">Dollar/Rupiah</p>
-          <p id="kursUSDIDR" class="text-lg text-ss text-white">Rp 16.848,58</p>
+          <p id="tanggal" class="text-xl text-ss text-yellow"></p> <!-- TANGGAL REALTIME -->
+          <p class="text-xl text-ss text-white">Harga Pi/USDT</p>
+          <p id="hargaUSDT" class="text-xl text-ss text-white">$0.1154</p>
+          <p class="text-xl text-ss text-sky">Pi/Rupiah</p>
+          <p id="hargaIDR" class="text-xl text-ss text-white">Rp 2.076,48</p>
+          <p class="text-xl text-ss text-green">Dollar/Rupiah</p>
+          <p id="kursUSDIDR" class="text-xl text-ss text-white">Rp 16.848,58</p>
         </div>
 
+        <!-- BAWAH LOGO = TEKS BARU -->
         <div class="text-center mb-0">
           <div class="w-12 h-12 rounded-lg border-kuning ring-2 mx-auto" style="background:#3b82f6; display:flex; align-items:center; justify-content:center;">
-            <p class="text-lg text-ss text-white" style="line-height:1;">My<br>Track</p>
+            <p class="text-xl text-ss text-white" style="line-height:1;">My<br>Track</p>
           </div>
-          <p class="text-lg text-ss text-white mt-0.5 mb-0">Welcome...xxxxxxxxxx<br>@2026</p>
+          <p class="text-base text-ss text-white mt-0.5 mb-0">Welcome to Pioneer at My Track App<br>@2026</p>
         </div>
     </div>
   </main>
@@ -94,6 +107,14 @@
     let currentUser = null;
     const btn = document.getElementById('btnBayar');
     window.onload = function() { Pi.init({ version: "2.0", sandbox: true }); };
+
+    // TANGGAL REALTIME AKTIF
+    function updateTanggal() {
+      const now = new Date();
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Jakarta' };
+      document.getElementById('tanggal').innerText = now.toLocaleDateString('id-ID', options);
+    }
+    updateTanggal();
 
     async function loginPi() {
       try {
@@ -125,4 +146,4 @@
     setInterval(updateData, 3000);
   </script>
 </body>
-</html>
+  </html>
