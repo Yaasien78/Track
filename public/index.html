@@ -38,7 +38,7 @@
 
   <div id="overlay" class="overlay"></div>
   <nav id="menu" class="menu">
-    <a href="#" id="menuBayar">💰 Bayar 0.1 Pi</a> <!-- KUNCI: Ganti teks menu -->
+    <a href="#" id="menuBayar">💰 Bayar 0.1 Pi</a>
     <a href="#" id="menuLogin">🔑 Login Pi</a>
   </nav>
 
@@ -59,7 +59,12 @@
   <footer><button id="btn" class="angka glow" style="font-size:20px;background:0;border:0;color:#fff">Login Pi</button></footer>
 
   <script>
-    Pi.init({version:"2.0",sandbox:true}); // KUNCI: sandbox:true = Testnet
+    // KUNCI 1: Cek Pi SDK udah load apa belum
+    if(!window.Pi){alert('Buka di Pi Browser ya bro, bukan Chrome');}
+    
+    // KUNCI 2: Init cuma 1x pas load
+    Pi.init({version:"2.0", sandbox:true}); 
+    
     let currentUser=null;
     const btn=document.getElementById('btn');
     const btnMenu=document.getElementById('btnMenu');
@@ -71,19 +76,24 @@
     function toggleMenu(){menu.classList.toggle('open');overlay.classList.toggle('show');}
     btnMenu.onclick=toggleMenu;
     overlay.onclick=toggleMenu;
-
     document.getElementById('tgl').innerText=new Date().toLocaleDateString('id-ID',{weekday:'long',year:'numeric',month:'long',day:'numeric',timeZone:'Asia/Jakarta'});
 
     async function loginPi(){
       try{
         btn.innerText='Login...';
         menuLogin.innerText='Login...';
-        const auth=await Pi.authenticate({scopes:['username']});
+        // KUNCI 3: scopes HARUS array ['username'] doang
+        const auth=await Pi.authenticate(['username']); 
         currentUser=auth.user;
         btn.innerText=`Halo ${auth.user.username}`;
         menuLogin.innerText=`Logout ${auth.user.username}`;
         toggleMenu();
-      }catch(e){btn.innerText='Login Pi';menuLogin.innerText='🔑 Login Pi';alert('Login Gagal: '+e);}
+      }catch(e){
+        btn.innerText='Login Pi';
+        menuLogin.innerText='🔑 Login Pi';
+        alert('Login Gagal: '+e.message); // Tunjukin message doang biar gak panjang
+        console.log(e);
+      }
     }
     
     async function bayarPi(){
@@ -93,7 +103,7 @@
         const pay=await Pi.createPayment({amount:0.1,memo:'Bayar 0.1 Pi Testnet My Track',metadata:{app:'mytrack'}},{onReadyForServerPayment:()=>{},onIncompletePaymentFound:()=>{},onCancelled:()=>alert('Batal Bayar'),onError:err=>alert('Error: '+err)});
         alert('Bayar Sukses! Tx: '+pay.identifier);
         toggleMenu();
-      }catch(e){alert('Bayar Gagal: '+e);}
+      }catch(e){alert('Bayar Gagal: '+e.message);}
     }
 
     btn.onclick=loginPi;
