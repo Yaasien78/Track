@@ -10,19 +10,19 @@
     tailwind.config = {
       theme: { extend: {
         colors: { 
-          'bg-gelap': '#0a0a0f', 
-          'neon-ungu': '#a855f7',
-          'neon-kuning': '#facc15',
-          'neon-biru': '#38bdf8',
-          'neon-hijau': '#4ade80'
+          'bg-gelap': '#000', 
+          'emas': '#facc15',
+          'biru': '#38bdf8',
+          'hijau': '#4ade80',
+          'kuning': '#fde047',
+          'merah': '#f87171'
         }
       }
     }
   </script>
   <style>
-   /* GLOW NEON PLEK SS KIRI */
-   .glow-box { box-shadow: 0 0 15px rgba(168, 85, 247, 0.5), inset 0 0 10px rgba(168, 85, 247, 0.2); }
-   .glow-text { text-shadow: 0 0 8px rgba(168, 85, 247, 0.8), 0 4px 8px rgba(0,0,0,0.9); }
+   .glow-text { text-shadow: 0 0 8px currentColor, 0 4px 8px rgba(0,0,0,0.9); }
+   .glow-box { box-shadow: 0 0 12px rgba(250, 204, 21, 0.4), inset 0 0 8px rgba(250, 204, 21, 0.1); }
    .text-neon {
      font-family: Impact, 'Arial Narrow', 'Arial Black', sans-serif;
      font-weight: 900;
@@ -36,41 +36,44 @@
      line-height: 1.1;
      letter-spacing: -0.5px;
    }
-   .border-neon { border: 2px solid #a855f7; }
-   .border-neon-b { border-bottom: 2px solid #a855f7; }
-   .border-neon-t { border-top: 2px solid #a855f7; }
-   body { background: #000; } /* Bg hitam plek SS */
+   .border-emas { border: 2px solid #facc15; }
+   .border-emas-b { border-bottom: 2px solid #facc15; }
+   .border-emas-t { border-top: 2px solid #facc15; }
+   body { background: #000; }
   </style>
 </head>
 <body>
-  <header class="bg-bg-gelap px-2 border-neon-b flex items-center justify-between fixed top-0 w-full h-14">
+  <!-- KUNCI: border-emas-b + span bg-emas = Garis menu emas -->
+  <header class="bg-bg-gelap px-2 border-emas-b flex items-center justify-between fixed top-0 w-full h-14">
     <a href="menu.html" class="flex flex-col justify-center space-y-1 w-6 h-6">
-      <span class="w-full h-0.5 bg-neon-ungu"></span>
-      <span class="w-full h-0.5 bg-neon-ungu"></span>
-      <span class="w-full h-0.5 bg-neon-ungu"></span>
+      <span class="w-full h-0.5 bg-emas"></span>
+      <span class="w-full h-0.5 bg-emas"></span>
+      <span class="w-full h-0.5 bg-emas"></span>
     </a>
     <h1 class="text-2xl font-black text-white text-neon glow-text" style="font-size: 28px;">My Track</h1>
-    <div class="w-10 h-10 rounded-full border-2 border-neon-kuning flex items-center justify-center bg-bg-gelap">
-      <span class="text-neon-kuning text-2xl font-black">π</span>
+    <!-- KUNCI: Logo emas -->
+    <div class="w-10 h-10 rounded-full border-2 border-emas flex items-center justify-center bg-bg-gelap glow-box">
+      <span class="text-emas text-2xl font-black">π</span>
     </div>
   </header>
 
   <main class="px-2 pt-14 pb-14">
-    <!-- KUNCI: bg-bg-gelap + border-neon + glow-box = Plek SS Kiri -->
-    <div class="bg-bg-gelap border-neon glow-box rounded-3xl px-2 pt-2 pb-2 m-1 flex-col justify-between" style="height: calc(100vh - 112px - 8px);">
+    <div class="bg-bg-gelap border-emas glow-box rounded-3xl px-2 pt-2 pb-2 m-1 flex-col justify-between" style="height: calc(100vh - 112px - 8px);">
 
         <div class="text-center">
           <p id="tanggal" class="text-neon text-white glow-text"></p>
-          <p class="text-neon text-neon-kuning glow-text">Harga Pi/USDT</p>
+          <!-- KUNCI: Warna label Biru, Hijau, Kuning, Merah -->
+          <p class="text-neon text-biru glow-text">Harga Pi/USDT</p>
           <p id="hargaUSDT" class="text-neon text-white glow-text">$0.1154</p>
-          <p class="text-neon text-neon-biru glow-text">Pi/Rupiah</p>
+          <p class="text-neon text-hijau glow-text">Pi/Rupiah</p>
           <p id="hargaIDR" class="text-neon text-white glow-text">Rp 2.076,48</p>
-          <p class="text-neon text-neon-hijau glow-text">Dollar/Rupiah</p>
+          <p class="text-neon text-kuning glow-text">Dollar/Rupiah</p>
           <p id="kursUSDIDR" class="text-neon text-white glow-text">Loading...</p>
+          <p class="text-neon text-merah glow-text">Status</p>
         </div>
 
         <div class="text-center mt-4">
-          <div class="w-14 h-14 rounded-xl border-neon ring-2 ring-neon-ungu mx-auto bg-blue-600 flex items-center justify-center glow-box">
+          <div class="w-14 h-14 rounded-xl border-emas ring-2 ring-emas mx-auto bg-blue-600 flex items-center justify-center glow-box">
             <p class="text-lg text-neon-kecil text-white" style="line-height:1;">My<br>Track</p>
           </div>
           <p class="text-sm text-neon-kecil text-white mt-0.5 mb-0 leading-tight glow-text">
@@ -82,8 +85,8 @@
     </div>
   </main>
 
-  <footer class="bg-bg-gelap px-3 border-neon-t flex items-center justify-center fixed bottom-0 w-full h-14">
-    <button id="btnBayar" class="text-lg text-neon text-neon-kuning glow-text w-full" style="font-size: 20px;">Login Pi</button>
+  <footer class="bg-bg-gelap px-3 border-emas-t flex items-center justify-center fixed bottom-0 w-full h-14">
+    <button id="btnBayar" class="text-lg text-neon text-emas glow-text w-full" style="font-size: 20px;">Login Pi</button>
   </footer>
 
   <script>
